@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JornaPay.Pages.InscripcionTrabajadores"
+             Title="Gestión de Trabajador"
+             BackgroundColor="LightYellow">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="20">
+            <Label Text="Gestión de Trabajador"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <!-- Nombre -->
+            <Entry Placeholder="Nombre"
+                   Text="{Binding Nombre}"
+                   FontSize="Large"
+                   BackgroundColor="White" 
+                   Margin="0,0,0,15" />
+
+            <!-- Apellidos -->
+            <Entry Placeholder="Apellidos"
+                   Text="{Binding Apellidos}"
+                   FontSize="Large"
+                   BackgroundColor="White" 
+                   Margin="0,0,0,15" />
+
+            <!-- Precio Por Hora -->
+            <HorizontalStackLayout Spacing="5" Margin="0,0,0,15">
+                <Entry Placeholder="Introduce el precio por hora"
+                        Text="{Binding PrecioPorHora, Mode=TwoWay}"
+                        FontSize="Large"
+                        BackgroundColor="White"
+                        Keyboard="Numeric"
+                        HorizontalOptions="FillAndExpand" />
+
+                <Label Text="€"
+                       FontSize="Large"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- Botones de interacción -->
+            <Button Text="Añadir Datos"
+                    Command="{Binding AnyadirDatosCommand}"
+                    BackgroundColor="Blue"
+                    TextColor="White" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

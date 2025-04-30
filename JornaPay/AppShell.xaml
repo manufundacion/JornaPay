@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell x:Class="JornaPay.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:local="clr-namespace:JornaPay.Pages"
+       FlyoutBehavior="Flyout"
+       FlyoutBackground="LightGray"
+       BackgroundColor="LightYellow"
+       Title="JornaPay - Gestión de Trabajadores">
+
+    <!-- Cabecera del Flyout -->
+    <Shell.FlyoutHeader>
+        <Frame BackgroundColor="LightGray" CornerRadius="5" Padding="10">
+            <VerticalStackLayout>
+                <Label Text="JornaPay - Gestión de Trabajadores"
+                       TextColor="Black"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       HorizontalOptions="Center" />
+                <Image Source="campo.png"
+                       Aspect="AspectFill"
+                       HeightRequest="100"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Frame>
+    </Shell.FlyoutHeader>
+
+    <!-- Menú lateral -->
+    <FlyoutItem Title="Inscripción de Trabajadores" Icon="trabajadores.png">
+        <ShellContent Title="Inscribir" Route="InscripcionTrabajadores" ContentTemplate="{DataTemplate local:InscripcionTrabajadores}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Lista de Trabajadores" Icon="trabajadoresLista.png">
+        <ShellContent Title="Lista" Route="ListaTrabajadores" ContentTemplate="{DataTemplate local:ListaTrabajadores}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Importes" Icon="trabajadores.png">
+        <ShellContent Title="Importes Pagados" Route="ImportesPagados" ContentTemplate="{DataTemplate local:ImportesPagados}" />
+        <ShellContent Title="Importes Impagados" Route="ImportesImpagados" ContentTemplate="{DataTemplate local:ImportesImpagados}" />
+    </FlyoutItem>
+
+    <!-- Ruta para NuevoTrabajador -->
+    <ShellContent Route="NuevoTrabajador" ContentTemplate="{DataTemplate local:NuevoTrabajador}" />
+</Shell>

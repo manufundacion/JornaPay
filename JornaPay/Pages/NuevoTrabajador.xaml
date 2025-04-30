@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JornaPay.Pages.NuevoTrabajador"
+             Title="{Binding Titulo}"
+             BackgroundColor="LightBlue">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="15" Spacing="20">
+
+            <!-- Título del Trabajador -->
+            <Label Text="{Binding Titulo}" 
+                   FontSize="Large" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" 
+                   TextColor="Black" />
+
+            <!-- Precio por Hora -->
+            <Label Text="Precio por Hora:" FontAttributes="Bold" />
+            <Entry Placeholder="Introduce el precio por hora"
+                   Text="{Binding PrecioPorHora, StringFormat='{}{0:F2}'}" 
+                   Keyboard="Numeric" />
+
+            <!-- Entrada de Fecha -->
+            <Label Text="Fecha:" FontAttributes="Bold" />
+            <DatePicker Date="{Binding FechaSeleccionada}" 
+                        Format="dd/MM/yyyy" 
+                        MinimumDate="{Binding MinimumDate}" 
+                        MaximumDate="{Binding MaximumDate}" />
+
+            <!-- Entrada de Horas Trabajadas -->
+            <Label Text="Horas Trabajadas:" FontAttributes="Bold" />
+            <Entry Placeholder="Introduce las horas trabajadas"
+                   Text="{Binding HorasTrabajadas}" 
+                   Keyboard="Numeric" />
+
+            <!-- Picker para Pagado -->
+            <Label Text="¿Pagado?" FontAttributes="Bold" />
+            <Picker ItemsSource="{Binding PagadoOptions}" 
+                    SelectedItem="{Binding Pagado}" 
+                    Title="Selecciona una opción" />
+
+            <!-- Botón para Guardar Registro -->
+            <Button Text="Guardar Registro"
+                    Command="{Binding GuardarRegistroCommand}"
+                    BackgroundColor="Blue"
+                    TextColor="White" />
+
+            <!-- Botón para Modificar Registro -->
+            <Button Text="Modificar Registro" 
+            Command="{Binding ModificarRegistroCommand}" 
+            BackgroundColor="DarkOrange" 
+            TextColor="White" 
+            IsEnabled="{Binding ElementoSeleccionado, Converter={StaticResource ObjectNotNullConverter}}" />
+
+            <!-- Botón para Eliminar Registro -->
+            <Button Text="Eliminar Registro" 
+             Command="{Binding EliminarRegistroCommand}" 
+             BackgroundColor="Red" 
+             TextColor="White" 
+             IsEnabled="{Binding ElementoSeleccionado, Converter={StaticResource ObjectNotNullConverter}}" />
+
+            <!-- Historial del Trabajador -->
+            <Label Text="Historial del Trabajador:" 
+                   FontSize="Medium" 
+                   FontAttributes="Bold" 
+                   TextColor="Black" />
+
+            <!-- Encabezado de Historial -->
+            <HorizontalStackLayout Spacing="10" Padding="5">
+                <Label Text="Fecha" 
+                       HorizontalOptions="Center" 
+                       FontAttributes="Bold" 
+                       TextColor="Black" 
+                       Margin="40,0,40,0" />
+
+                <Label Text="Horas" 
+                       HorizontalOptions="Center" 
+                       FontAttributes="Bold" 
+                       TextColor="Black" 
+                       WidthRequest="60" />
+
+                <Label Text="¿Pagado?" 
+                       HorizontalOptions="Center" 
+                       FontAttributes="Bold" 
+                       TextColor="Black" 
+                       WidthRequest="70" />
+
+                <Label Text="Total" 
+                       HorizontalOptions="Center" 
+                       FontAttributes="Bold" 
+                       TextColor="Black" 
+                       WidthRequest="50" 
+                       Margin="20,0,0,0"/>
+            </HorizontalStackLayout>
+
+            <!-- Lista de Historial -->
+            <ListView ItemsSource="{Binding Historial}" Margin="10" HasUnevenRows="True"
+                                   SelectedItem="{Binding ElementoSeleccionado, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <HorizontalStackLayout Spacing="15" Padding="10">
+                                <Label Text="{Binding Fecha, StringFormat='{}{0:dd/MM/yyyy}'}" HorizontalOptions="Start" TextColor="Black" WidthRequest="100" />
+                                <Label Text="{Binding HorasRealizadas}" HorizontalOptions="Start" TextColor="Black" WidthRequest="80" />
+                                <Label Text="{Binding EstadoPago}" HorizontalOptions="Start" TextColor="Black" WidthRequest="70" />
+                                <Label Text="{Binding PrecioTotal}" HorizontalOptions="Start" TextColor="Black" WidthRequest="80" />
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JornaPay.Pages.ListaTrabajadores"
+             Title="Lista de Trabajadores"
+             BackgroundColor="LightYellow">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="20">
+
+            <Label Text="Lista de Trabajadores"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <!-- Mensaje de selección -->
+            <Label Text="Por favor, seleccione un nombre en la lista para:"
+                   FontSize="Medium"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="Red" />
+
+            <!-- Botón para actualizar trabajador -->
+            <Button Text="Actualizar Trabajador"
+                    Command="{Binding ActualizarTrabajadorCommand}"
+                    BackgroundColor="Blue"
+                    TextColor="White"
+                    IsEnabled="{Binding PuedeActualizar, Converter={StaticResource ObjectNotNullConverter}}" />
+
+            <!-- Botón para eliminar trabajador -->
+            <Button Text="Eliminar Trabajador"
+                    Command="{Binding EliminarTrabajadorCommand}"
+                    BackgroundColor="Red"
+                    TextColor="White"
+                    IsEnabled="{Binding PuedeEliminar, Converter={StaticResource ObjectNotNullConverter}}" />
+
+            <!-- ListView para mostrar los trabajadores -->
+            <ListView ItemsSource="{Binding Trabajadores}"
+                      SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"
+                      Margin="10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <HorizontalStackLayout Spacing="15" Padding="10">
+                                <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="{Binding Apellidos}" TextColor="Black"/>
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

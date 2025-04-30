@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JornaPay.Pages.InicioRegistro"
+             xmlns:local="clr-namespace:JornaPay.ViewModels"
+             NavigationPage.HasNavigationBar="False">
+
+    <ContentPage.BindingContext>
+        <local:TrabajadoresViewModels/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label" x:Key="titulo">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="FontSize" Value="Title"/>
+            </Style>
+
+            <Style TargetType="Entry" x:Key="cajaTexto">
+                <Setter Property="PlaceholderColor" Value="DarkBlue"/>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
+
+            <Style TargetType="Button" x:Key="botones">
+                <Setter Property="BackgroundColor" Value="DarkBlue"/>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="WidthRequest" Value="200"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="25" BackgroundColor="LightBlue">
+            <Label Text="Bienvenido a:" Style="{StaticResource titulo}" Margin="0,50,0,0" />
+            <Image Source="jornapay.png" HeightRequest="200" />
+            <Entry Placeholder="Nombre de Usuario" Text="{Binding NombreUsuario}" Style="{StaticResource cajaTexto}" HeightRequest="60" />
+            <Entry Placeholder="Contraseña" Text="{Binding Contraseña}" Style="{StaticResource cajaTexto}" IsPassword="True" HeightRequest="60" />
+            <Button Text="Iniciar Sesión" Style="{StaticResource botones}" Command="{Binding IniciarSesionCommand}" HeightRequest="60"/>
+            <Button Text="Registrarse" Style="{StaticResource botones}" Command="{Binding RegistrarUsuarioCommand}" HeightRequest="60"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
