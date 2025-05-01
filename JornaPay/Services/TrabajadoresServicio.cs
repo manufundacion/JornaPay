@@ -27,7 +27,7 @@ namespace JornaPay.Services
 
         public static TrabajadoresServicio GetInstance()
         {
-            lock (_lock) // 🔥 Evita que múltiples hilos accedan al mismo tiempo
+            lock (_lock) // Evita que múltiples hilos accedan al mismo tiempo
             {
                 if (_instance == null)
                 {
@@ -143,7 +143,7 @@ namespace JornaPay.Services
         public async Task<List<TrabajadorDatos>> ObtenerHistorialPorTrabajadorAsync(int trabajadorId)
         {
             var historial = await _conn.Table<TrabajadorDatos>()
-                                       .Where(h => h.TrabajadorId == trabajadorId) // 🔥 Filtrar por ID de trabajador
+                                       .Where(h => h.TrabajadorId == trabajadorId) // Filtrar por ID de trabajador
                                        .ToListAsync();
 
             if (historial == null || historial.Count == 0)

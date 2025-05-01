@@ -133,43 +133,43 @@ namespace JornaPay.ViewModels
                     return;
                 }
 
-                // 🔥 Mostrar el diálogo con el `DatePicker` primero
+                // Mostrar el diálogo con el DatePicker primero
                 DateTime? nuevaFecha = await MostrarSelectorFechaEnDialogoAsync(registroBD.Fecha);
                 if (!nuevaFecha.HasValue) return; // ❌ Si el usuario cancela, no hacer nada
 
-                // 🔥 Pedir las nuevas horas trabajadas
+                // Pedir las nuevas horas trabajadas
                 string nuevasHoras = await Application.Current.MainPage.DisplayPromptAsync(
                     "Modificar Horas", "Introduce las nuevas horas trabajadas",
                     initialValue: registroBD.HorasRealizadas.ToString(), accept: "Aceptar", cancel: "Cancelar");
                 if (string.IsNullOrEmpty(nuevasHoras)) return;
 
-                // 🔥 Pedir el nuevo precio por hora
+                // Pedir el nuevo precio por hora
                 string nuevoPrecioPorHora = await Application.Current.MainPage.DisplayPromptAsync(
                     "Modificar Precio por Hora", "Introduce el nuevo precio por hora (€)",
                     initialValue: registroBD.PrecioPorHora.ToString(), accept: "Aceptar", cancel: "Cancelar");
                 if (string.IsNullOrEmpty(nuevoPrecioPorHora)) return;
 
-                // 🔥 Preguntar si el registro está pagado
+                // Preguntar si el registro está pagado
                 string nuevoEstadoPago = await Application.Current.MainPage.DisplayActionSheet(
                     "¿Pagado?", "Cancelar", null, "Sí", "No");
                 if (nuevoEstadoPago == "Cancelar") return;
 
-                // 🔥 Aplicar cambios solo si el usuario ha confirmado cada entrada
+                // Aplicar cambios solo si el usuario ha confirmado cada entrada
                 registroBD.Fecha = nuevaFecha.Value;
                 registroBD.HorasRealizadas = decimal.Parse(nuevasHoras);
                 registroBD.PrecioPorHora = decimal.Parse(nuevoPrecioPorHora);
                 registroBD.Pagado = nuevoEstadoPago == "Sí";
 
-                // 🔥 Recalcular PrecioTotal con el nuevo PrecioPorHora
+                // Recalcular PrecioTotal con el nuevo PrecioPorHora
                 registroBD.PrecioTotal = registroBD.HorasRealizadas * registroBD.PrecioPorHora;
 
-                // 🔥 Guardar los cambios en la base de datos
+                // Guardar los cambios en la base de datos
                 await _trabajadoresServicio.ActualizarHistorialAsync(registroBD);
 
-                // 🔥 Volver a asignar `ElementoSeleccionado` para que la UI se refresque
+                // Volver a asignar elementoSeleccionado para que se refresque
                 ElementoSeleccionado = await _trabajadoresServicio.ObtenerRegistroAsync(registroBD.Id);
 
-                // 🔥 Recargar el historial para reflejar los cambios
+                //Recargar el historial para reflejar los cambios
                 await CargarHistorialAsync();
                 OnPropertyChanged(nameof(Historial));
                 OnPropertyChanged(nameof(ElementoSeleccionado));
@@ -195,7 +195,7 @@ namespace JornaPay.ViewModels
 
             await _trabajadoresServicio.EliminarHistorialAsync(ElementoSeleccionado.Id);
 
-            // 🔥 Recargar historial para reflejar la eliminación
+            //Recargar historial para reflejar la eliminación
             await CargarHistorialAsync();
             OnPropertyChanged(nameof(Historial));
 

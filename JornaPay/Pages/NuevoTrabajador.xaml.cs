@@ -24,7 +24,7 @@ public partial class NuevoTrabajador : ContentPage
     {
         base.OnAppearing();
 
-        await _viewModel.CargarHistorialAsync(); // 🔥 Ahora carga el historial AL abrir la página
+        await _viewModel.CargarHistorialAsync(); //Carga el historial aL abrir la página
     }
 
     private void OnItemTapped(object sender, ItemTappedEventArgs e)

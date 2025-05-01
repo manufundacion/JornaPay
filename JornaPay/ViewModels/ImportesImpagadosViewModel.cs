@@ -16,7 +16,7 @@ namespace JornaPay.ViewModels
         private List<TrabajadorDatos> _trabajadores;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ImportesImpagadosViewModel(TrabajadoresServicio trabajadoresServicio) // 🔥 Agrega este constructor
+        public ImportesImpagadosViewModel(TrabajadoresServicio trabajadoresServicio)
         {
             _trabajadoresServicio = trabajadoresServicio;
         }
@@ -60,7 +60,7 @@ namespace JornaPay.ViewModels
                 })
                 .ToList();
 
-            OnPropertyChanged(nameof(Trabajadores)); // 🔥 Notificar cambios
+            OnPropertyChanged(nameof(Trabajadores)); //Notificar cambios
         });
 
         protected void OnPropertyChanged(string propertyName)

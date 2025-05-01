@@ -88,9 +88,9 @@ namespace JornaPay.ViewModels
                 if (_trabajadorSeleccionado != value)
                 {
                     _trabajadorSeleccionado = value;
-                    OnPropertyChanged(nameof(TrabajadorSeleccionado)); // 🔥 Notifica cambios
-                    OnPropertyChanged(nameof(PuedeActualizar)); // 🔥 Actualiza el botón
-                    OnPropertyChanged(nameof(PuedeEliminar));   // 🔥 Actualiza el botón
+                    OnPropertyChanged(nameof(TrabajadorSeleccionado)); //Notifica cambios
+                    OnPropertyChanged(nameof(PuedeActualizar)); //Actualiza al trabjador seleccionado
+                    OnPropertyChanged(nameof(PuedeEliminar));   //Elimina al trabjador seleccionado
                 }
             }
         }
