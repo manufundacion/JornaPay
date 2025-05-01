@@ -14,4 +14,10 @@ public partial class ImportesPagados : ContentPage
         BindingContext = _viewModel;
         _viewModel.BuscarCommand.Execute(null);
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _viewModel.BuscarCommand.Execute(null); //Actualizar automáticamente al abrir la pantalla
+    }
 }

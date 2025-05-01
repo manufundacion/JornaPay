@@ -13,4 +13,11 @@ public partial class ImportesImpagados : ContentPage
         BindingContext = _viewModel;
         _viewModel.BuscarCommand.Execute(null); //Cargar datos al abrir la página
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _viewModel.BuscarCommand.Execute(null); //Actualizar automáticamente al abrir la pantalla
+    }
+
 }

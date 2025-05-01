@@ -45,14 +45,17 @@ namespace JornaPay.ViewModels
                 .Where(t => t.Pagado == true &&
                             (string.IsNullOrEmpty(NombreBusqueda) ||
                              t.Nombre.Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase)))
-                .GroupBy(t => t.Nombre)
+                .GroupBy(t => new { t.Nombre, t.Apellidos }) //Agrupar por Nombre y Apellidos
                 .Select(g => new TrabajadorDatos
                 {
-                    Nombre = g.Key,
-                    ImporteTotal = g.Sum(t => t.ImporteTotal),
+                    Nombre = g.Key.Nombre + " " + g.Key.Apellidos, 
+                    ImporteTotal = g.Sum(t => t.ImporteTotal), //Sumar correctamente
                     Pagado = true
                 })
+                .Where(t => t.ImporteTotal > 0) //Eliminar registros donde el total sea 0
                 .ToList();
+
+            OnPropertyChanged(nameof(Trabajadores)); // Notificar cambios
         });
 
         public ImportesPagadosViewModel(TrabajadoresServicio trabajadoresServicio)

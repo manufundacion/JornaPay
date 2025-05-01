@@ -21,6 +21,8 @@ namespace JornaPay.Models
 
         public string Nombre { get; set; } // Nombre del trabajador
 
+        public string Apellidos { get; set; } // Apellidos del trabajador
+
         public decimal ImporteTotal { get; set; }
 
         //Método para actualizar el estado de pago sin modificar la propiedad directamente
