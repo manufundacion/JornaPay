@@ -51,40 +51,67 @@ namespace JornaPay.ViewModels
 
         public ICommand BuscarCommand => new Command(async () =>
         {
+            if (_trabajadoresServicio == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "El servicio de trabajadores no está inicializado.", "OK");
+                return;
+            }
+
             var listaCompleta = await _trabajadoresServicio.ObtenerTodosTrabajadoresAsync();
+            if (listaCompleta == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo obtener la lista de trabajadores.", "OK");
+                return;
+            }
+
             var pagadosAgrupados = new Dictionary<string, decimal>();
 
             foreach (var trabajador in listaCompleta)
             {
                 var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
+                if (historial == null) continue;
+
                 var registrosPagados = historial.Where(h => h.Pagado);
 
                 foreach (var registro in registrosPagados)
                 {
                     string clave = trabajador.Nombre + " " + trabajador.Apellidos;
 
-                    if (pagadosAgrupados.ContainsKey(clave))
+                    if (!string.IsNullOrEmpty(trabajador.Nombre) && !string.IsNullOrEmpty(trabajador.Apellidos))
                     {
-                        pagadosAgrupados[clave] += registro.PrecioTotal; //Sumo los importes si ya existen
-                    }
-                    else
-                    {
-                        pagadosAgrupados[clave] = registro.PrecioTotal; //Agrego un nuevo trabajador
+                        if (pagadosAgrupados.ContainsKey(clave))
+                        {
+                            pagadosAgrupados[clave] += registro.PrecioTotal;
+                        }
+                        else
+                        {
+                            pagadosAgrupados[clave] = registro.PrecioTotal;
+                        }
                     }
                 }
             }
 
-            // Convierto el diccionario en una lista de TrabajadorDatos
-            Trabajadores = pagadosAgrupados.Select(t => new TrabajadorDatos
+            var trabajadoresFiltrados = pagadosAgrupados.Select(t => new TrabajadorDatos
             {
-                Nombre = t.Key,
+                Nombre = t.Key.Split(" ")[0],
+                Apellidos = t.Key.Substring(t.Key.IndexOf(" ") + 1),
                 ImporteTotal = t.Value,
                 Pagado = true
             }).ToList();
 
-            ImporteTotalPagado = pagadosAgrupados.Values.Sum(); //Guardo el total pagado
+            if (!string.IsNullOrWhiteSpace(NombreBusqueda))
+            {
+                trabajadoresFiltrados = trabajadoresFiltrados
+                    .Where(t => $"{t.Nombre} {t.Apellidos}".Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            Trabajadores = trabajadoresFiltrados;
+            ImporteTotalPagado = trabajadoresFiltrados.Sum(t => t.ImporteTotal);
             OnPropertyChanged(nameof(Trabajadores));
         });
+
+
 
 
 

@@ -29,8 +29,8 @@
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout Orientation="Horizontal" Padding="10">
-                                <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold" />
-                                <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold" />
+                                <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold"/>
+                                <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold" Margin="5,0,0,0" />
                                 <Label Text=" se le ha pagado un total de " />
                                 <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" TextColor="Black" FontAttributes="Bold"/>
                             </StackLayout>
