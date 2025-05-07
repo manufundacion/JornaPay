@@ -112,6 +112,12 @@ namespace JornaPay.ViewModels
             }
         }
 
+        public decimal TotalPendientePago
+        {
+            get => Historial.Where(h => !h.Pagado).Sum(h => h.PrecioTotal); //Suma solo los registros no pagados
+        }
+
+
         public DateTime MinimumDate => DateTime.Today.AddYears(-1);
         public DateTime MaximumDate => DateTime.Today.AddYears(1);
 
@@ -173,8 +179,7 @@ namespace JornaPay.ViewModels
                 await CargarHistorialAsync();
                 OnPropertyChanged(nameof(Historial));
                 OnPropertyChanged(nameof(ElementoSeleccionado));
-
-                await Application.Current.MainPage.DisplayAlert("Éxito", $"Nuevo PrecioTotal calculado: {ElementoSeleccionado?.PrecioTotal} €", "OK");
+                await Application.Current.MainPage.DisplayAlert("Éxito", $"Datos actualizados con éxito", "OK");
             }
         });
 
@@ -232,7 +237,7 @@ namespace JornaPay.ViewModels
 
                 var historialTrabajador = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
 
-                //Muestro el aviso solo si la lista sigue vacía después de cargar la consulta
+                // Muestro el aviso solo si la lista sigue vacía después de cargar la consulta
                 if (historialTrabajador.Count == 0)
                 {
                     await Application.Current.MainPage.DisplayAlert("Aviso", "No se encontraron registros de historial en la base de datos.", "OK");
@@ -245,7 +250,8 @@ namespace JornaPay.ViewModels
                         {
                             Historial.Add(registro);
                         }
-                        OnPropertyChanged(nameof(Historial)); // Actualizo el historial
+                        OnPropertyChanged(nameof(Historial)); //Actualizo el historial
+                        ActualizarTotalPendiente(); //Se actualiza el total pendiente de pago
                     });
                 }
             }
@@ -255,6 +261,12 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo cargar el historial: {ex.Message}", "OK");
             }
         }
+
+        private void ActualizarTotalPendiente()
+        {
+            OnPropertyChanged(nameof(TotalPendientePago)); // 🔥 Notifica a la UI que el total ha cambiado
+        }
+
 
         private async void GuardarRegistro()
         {
@@ -310,6 +322,10 @@ namespace JornaPay.ViewModels
             }
 
             Historial.Add(historialGuardado);
+
+            await Application.Current.MainPage.DisplayAlert("Éxito", "Datos insertados correctamente.", "OK");
+            // Recargo el historial para reflejar los cambios
+            await CargarHistorialAsync();
             OnPropertyChanged(nameof(Historial));
         }
 

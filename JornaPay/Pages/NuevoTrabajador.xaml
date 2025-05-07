@@ -110,6 +110,15 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
+            <!-- Total pendiente de pago -->
+            <Label Text="{Binding TotalPendientePago, StringFormat='Total pendiente: {0:C2}'}"
+                   FontSize="Medium"
+                   FontAttributes="Bold"
+                   TextColor="Red"
+                   HorizontalOptions="Center"
+                   Margin="0,10,0,0" />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

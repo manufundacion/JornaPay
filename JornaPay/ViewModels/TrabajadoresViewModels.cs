@@ -52,6 +52,11 @@ namespace JornaPay.ViewModels
         public string SwitchColor { get => _switchColor; set => SetProperty(ref _switchColor, value); }
         public bool PuedeActualizar { get => _puedeActualizar; set => SetProperty(ref _puedeActualizar, value); }
         public bool PuedeEliminar { get => _puedeEliminar; set => SetProperty(ref _puedeEliminar, value); }
+        public decimal TotalPendientePago
+        {
+            get => Historial.Where(h => !h.Pagado).Sum(h => h.PrecioTotal); //Suma solo los registros no pagados
+        }
+
 
         public string NombreUsuarioActual
         {
@@ -91,9 +96,11 @@ namespace JornaPay.ViewModels
                     OnPropertyChanged(nameof(TrabajadorSeleccionado)); //Notifica cambios
                     OnPropertyChanged(nameof(PuedeActualizar)); //Actualiza al trabjador seleccionado
                     OnPropertyChanged(nameof(PuedeEliminar));   //Elimina al trabjador seleccionado
+                    CargarHistorialTrabajadorAsync(); 
                 }
             }
         }
+
 
         public ICommand IniciarSesionCommand { get; }
         public ICommand RegistrarUsuarioCommand { get; }
@@ -356,6 +363,7 @@ namespace JornaPay.ViewModels
 
             Historial.Add(nuevoRegistro);
             CalcularTotal();
+            ActualizarTotalPendiente();
 
             Application.Current.MainPage.DisplayAlert("Éxito", "Registro guardado correctamente.", "OK");
         }
@@ -386,6 +394,7 @@ namespace JornaPay.ViewModels
             {
                 Nombre = nuevoNombre;
                 Apellidos = nuevosApellidos;
+                ActualizarTotalPendiente();
                 Application.Current.MainPage.DisplayAlert("Éxito", "Datos actualizados correctamente.", "OK");
             }
             else
@@ -393,6 +402,12 @@ namespace JornaPay.ViewModels
                 Application.Current.MainPage.DisplayAlert("Error", "No se realizaron cambios.", "OK");
             }
         }
+
+        private void ActualizarTotalPendiente()
+        {
+            OnPropertyChanged(nameof(TotalPendientePago)); //Notifica el cambio para actualizar
+        }
+
 
         private async Task ActualizarTrabajador()
         {
@@ -458,6 +473,7 @@ namespace JornaPay.ViewModels
                 //Fuerzo la actualización de la lista
                 OnPropertyChanged(nameof(Trabajadores));
                 OnPropertyChanged(nameof(TrabajadorSeleccionado));
+                ActualizarTotalPendiente();
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador eliminado correctamente.", "OK");
             }
@@ -466,6 +482,29 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo eliminar el trabajador: {ex.Message}", "OK");
             }
         }
+
+        private async Task CargarHistorialTrabajadorAsync()
+        {
+            if (TrabajadorSeleccionado == null) return;
+
+            try
+            {
+                var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(TrabajadorSeleccionado.Id);
+                Historial.Clear();
+
+                foreach (var registro in historial)
+                {
+                    Historial.Add(registro);
+                }
+
+                ActualizarTotalPendiente(); // 🔥 Se actualiza el total pendiente al abrir la página
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"Error al cargar historial: {ex.Message}", "OK");
+            }
+        }
+
 
 
         private void CalcularTotal()
