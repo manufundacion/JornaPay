@@ -40,23 +40,28 @@ namespace JornaPay.ViewModels
         public ICommand BuscarCommand => new Command(async () =>
         {
             var listaCompleta = await _trabajadoresServicio.ObtenerTodosTrabajadoresAsync();
+            var pagados = new List<TrabajadorDatos>();
 
-            Trabajadores = listaCompleta
-                .Where(t => t.Pagado == true &&
-                            (string.IsNullOrEmpty(NombreBusqueda) ||
-                             t.Nombre.Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase)))
-                .GroupBy(t => new { t.Nombre, t.Apellidos }) //Agrupar por Nombre y Apellidos
-                .Select(g => new TrabajadorDatos
+            foreach (var trabajador in listaCompleta)
+            {
+                var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
+                var registrosPagados = historial.Where(h => h.Pagado);
+
+                if (registrosPagados.Any())
                 {
-                    Nombre = g.Key.Nombre + " " + g.Key.Apellidos, 
-                    ImporteTotal = g.Sum(t => t.ImporteTotal), //Sumar correctamente
-                    Pagado = true
-                })
-                .Where(t => t.ImporteTotal > 0) //Eliminar registros donde el total sea 0
-                .ToList();
+                    pagados.Add(new TrabajadorDatos
+                    {
+                        Nombre = trabajador.Nombre + " " + trabajador.Apellidos,
+                        ImporteTotal = registrosPagados.Sum(r => r.PrecioTotal), //Sumo los importes
+                        Pagado = true
+                    });
+                }
+            }
 
-            OnPropertyChanged(nameof(Trabajadores)); // Notificar cambios
+            Trabajadores = pagados;
+            OnPropertyChanged(nameof(Trabajadores));
         });
+
 
         public ImportesPagadosViewModel(TrabajadoresServicio trabajadoresServicio)
         {

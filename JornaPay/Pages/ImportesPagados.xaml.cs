@@ -1,3 +1,4 @@
+
 using JornaPay.ViewModels;
 using JornaPay.Services;
 
@@ -18,6 +19,6 @@ public partial class ImportesPagados : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _viewModel.BuscarCommand.Execute(null); //Actualizar automáticamente al abrir la pantalla
+        _viewModel.BuscarCommand.Execute(null); //Actualizo automáticamente al abrir la pantalla
     }
 }

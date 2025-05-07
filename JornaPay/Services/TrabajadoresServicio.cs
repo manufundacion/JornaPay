@@ -10,7 +10,7 @@ namespace JornaPay.Services
     {
         private readonly SQLiteAsyncConnection _conn;
         private static TrabajadoresServicio? _instance;
-        private static readonly object _lock = new(); //Protección contra concurrencia
+        private static readonly object _lock = new(); //Protejo el objeto ante posible concurrencia
 
         private TrabajadoresServicio(string dbPath)
         {
@@ -21,13 +21,13 @@ namespace JornaPay.Services
 
             // Crear tablas necesarias
             _conn.CreateTableAsync<Trabajador>().Wait();
-            _conn.CreateTableAsync<TrabajadorDatos>().Wait(); // Nueva tabla para historial
+            _conn.CreateTableAsync<TrabajadorDatos>().Wait(); // Tabla para historial
             _conn.CreateTableAsync<Usuario>().Wait(); // Tabla de usuarios
         }
 
         public static TrabajadoresServicio GetInstance()
         {
-            lock (_lock) // Evita que múltiples hilos accedan al mismo tiempo
+            lock (_lock) // Evito que múltiples hilos accedan al mismo tiempo
             {
                 if (_instance == null)
                 {
@@ -143,16 +143,12 @@ namespace JornaPay.Services
         public async Task<List<TrabajadorDatos>> ObtenerHistorialPorTrabajadorAsync(int trabajadorId)
         {
             var historial = await _conn.Table<TrabajadorDatos>()
-                                       .Where(h => h.TrabajadorId == trabajadorId) // Filtrar por ID de trabajador
+                                       .Where(h => h.TrabajadorId == trabajadorId)
                                        .ToListAsync();
 
-            if (historial == null || historial.Count == 0)
-            {
-                await Application.Current.MainPage.DisplayAlert("Aviso", "No se encontraron registros de historial en la base de datos.", "OK");
-            }
-
-            return historial;
+            return historial ?? new List<TrabajadorDatos>(); //Devuelvo la lista vacía en lugar de mostrar alerta
         }
+
 
 
         public async Task GuardarHistorialAsync(TrabajadorDatos registro)
@@ -214,7 +210,7 @@ namespace JornaPay.Services
 
             if (usuario != null)
             {
-                // Almacena el usuario validado en la sesión
+                // Almaceno el usuario validado en la sesión
                 SesionUsuario.NombreUsuarioActual = usuario.NombreUsuario;
             }
 

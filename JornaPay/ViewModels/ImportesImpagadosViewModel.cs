@@ -1,4 +1,5 @@
-﻿using JornaPay.Models;
+﻿
+using JornaPay.Models;
 using JornaPay.Services;
 using System;
 using System.Collections.Generic;
@@ -42,26 +43,29 @@ namespace JornaPay.ViewModels
                 OnPropertyChanged(nameof(Trabajadores));
             }
         }
-
         public ICommand BuscarCommand => new Command(async () =>
         {
             var listaCompleta = await _trabajadoresServicio.ObtenerTodosTrabajadoresAsync();
+            var impagados = new List<TrabajadorDatos>();
 
-            Trabajadores = listaCompleta
-                .Where(t => t.Pagado == false &&
-                            (string.IsNullOrEmpty(NombreBusqueda) ||
-                             t.Nombre.Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase)))
-                .GroupBy(t => new { t.Nombre, t.Apellidos }) //Agrupar por Nombre y Apellidos
-                .Select(g => new TrabajadorDatos
+            foreach (var trabajador in listaCompleta)
+            {
+                var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
+                var registrosImpagados = historial.Where(h => !h.Pagado);
+
+                if (registrosImpagados.Any())
                 {
-                    Nombre = g.Key.Nombre + " " + g.Key.Apellidos, 
-                    ImporteTotal = g.Sum(t => t.HorasTrabajadas * t.PrecioPorHora), //Calcular el total correctamente
-                    Pagado = false
-                })
-                .Where(t => t.ImporteTotal > 0) //Eliminar registros donde el total sea 0
-                .ToList();
+                    impagados.Add(new TrabajadorDatos
+                    {
+                        Nombre = trabajador.Nombre + " " + trabajador.Apellidos,
+                        ImporteTotal = registrosImpagados.Sum(r => r.PrecioTotal), //Sumo los importes
+                        Pagado = false
+                    });
+                }
+            }
 
-            OnPropertyChanged(nameof(Trabajadores)); // Notificar cambios
+            Trabajadores = impagados;
+            OnPropertyChanged(nameof(Trabajadores));
         });
 
         protected void OnPropertyChanged(string propertyName)

@@ -17,7 +17,7 @@ public partial class ImportesImpagados : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _viewModel.BuscarCommand.Execute(null); //Actualizar automáticamente al abrir la pantalla
+        _viewModel.BuscarCommand.Execute(null); //Actualizo automáticamente al abrir la pantalla
     }
 
 }
