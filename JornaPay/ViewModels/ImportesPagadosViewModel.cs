@@ -111,10 +111,6 @@ namespace JornaPay.ViewModels
             OnPropertyChanged(nameof(Trabajadores));
         });
 
-
-
-
-
         public ImportesPagadosViewModel(TrabajadoresServicio trabajadoresServicio)
         {
             _trabajadoresServicio = trabajadoresServicio;

@@ -17,7 +17,7 @@ namespace JornaPay.ViewModels
         private decimal _precioPorHora;
         private decimal _horasTrabajadas;
         private string _pagado;
-        private DateTime _fechaSeleccionada;
+        private DateTime _fechaSeleccionada = DateTime.Today;
         private TrabajadorDatos _elementoSeleccionado;
 
         public string Nombre
@@ -94,11 +94,8 @@ namespace JornaPay.ViewModels
             get => _fechaSeleccionada;
             set
             {
-                if (_fechaSeleccionada != value)
-                {
-                    _fechaSeleccionada = value;
-                    OnPropertyChanged();
-                }
+                _fechaSeleccionada = value;
+                OnPropertyChanged(nameof(FechaSeleccionada));
             }
         }
 
