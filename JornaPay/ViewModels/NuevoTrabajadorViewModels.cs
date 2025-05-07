@@ -331,9 +331,9 @@ namespace JornaPay.ViewModels
             var tcs = new TaskCompletionSource<DateTime?>();
             DatePicker datePicker = new DatePicker
             {
-                Date = fechaActual,
-                MaximumDate = DateTime.Today,
-                MinimumDate = new DateTime(2000, 1, 1),
+                Date = DateTime.Today, //La fecha inicial es la actual
+                MaximumDate = DateTime.Today, // No se pueden seleccionar fechas futuras
+                MinimumDate = new DateTime(2000, 1, 1), // Se pueden seleccionar fechas anteriores
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 FontSize = 32,
@@ -352,65 +352,66 @@ namespace JornaPay.ViewModels
                     HorizontalOptions = LayoutOptions.Center,
                     VerticalOptions = LayoutOptions.Center,
                     Children =
+            {
+                new Label
+                {
+                    Text = "Selecciona una nueva fecha",
+                    FontSize = 36,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    TextColor = Colors.Black
+                },
+                new Frame
+                {
+                    BorderColor = Colors.Transparent,
+                    HasShadow = false,
+                    BackgroundColor = Colors.Transparent,
+                    Padding = 5,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    WidthRequest = 260,
+                    Content = datePicker
+                },
+                new Button
+                {
+                    Text = "Aceptar",
+                    BackgroundColor = Colors.Blue,
+                    TextColor = Colors.White,
+                    FontSize = 28,
+                    WidthRequest = 220,
+                    HeightRequest = 80,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    Command = new Command(() =>
                     {
-                        new Label
-                        {
-                            Text = "Selecciona una nueva fecha",
-                            FontSize = 36,
-                            HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            TextColor = Colors.Black
-                        },
-                        new Frame
-                        {
-                            BorderColor = Colors.Transparent,
-                            HasShadow = false,
-                            BackgroundColor = Colors.Transparent,
-                            Padding = 5,
-                            HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            WidthRequest = 260,
-                            Content = datePicker
-                        },
-                        new Button
-                        {
-                            Text = "Aceptar",
-                            BackgroundColor = Colors.Blue,
-                            TextColor = Colors.White,
-                            FontSize = 28,
-                            WidthRequest = 220,
-                            HeightRequest = 80,
-                            HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            Command = new Command(() =>
-                            {
-                                tcs.SetResult(datePicker.Date);
-                                Application.Current.MainPage.Navigation.PopModalAsync();
-                            })
-                        },
-                        new Button
-                        {
-                            Text = "Cancelar",
-                            BackgroundColor = Colors.Red,
-                            TextColor = Colors.White,
-                            FontSize = 28,
-                            WidthRequest = 220,
-                            HeightRequest = 80,
-                            HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            Command = new Command(() =>
-                            {
-                                tcs.SetResult(null);
-                                Application.Current.MainPage.Navigation.PopModalAsync();
-                            })
-                        }
-                    }
+                        tcs.SetResult(datePicker.Date);
+                        Application.Current.MainPage.Navigation.PopModalAsync();
+                    })
+                },
+                new Button
+                {
+                    Text = "Cancelar",
+                    BackgroundColor = Colors.Red,
+                    TextColor = Colors.White,
+                    FontSize = 28,
+                    WidthRequest = 220,
+                    HeightRequest = 80,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    Command = new Command(() =>
+                    {
+                        tcs.SetResult(null);
+                        Application.Current.MainPage.Navigation.PopModalAsync();
+                    })
+                }
+            }
                 }
             };
 
             await Application.Current.MainPage.Navigation.PushModalAsync(modalPage);
             return await tcs.Task;
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
