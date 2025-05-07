@@ -264,7 +264,7 @@ namespace JornaPay.ViewModels
 
         private void ActualizarTotalPendiente()
         {
-            OnPropertyChanged(nameof(TotalPendientePago)); // 🔥 Notifica a la UI que el total ha cambiado
+            OnPropertyChanged(nameof(TotalPendientePago)); //Notifico que el total ha cambiado
         }
 
 

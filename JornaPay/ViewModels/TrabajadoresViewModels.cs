@@ -54,7 +54,7 @@ namespace JornaPay.ViewModels
         public bool PuedeEliminar { get => _puedeEliminar; set => SetProperty(ref _puedeEliminar, value); }
         public decimal TotalPendientePago
         {
-            get => Historial.Where(h => !h.Pagado).Sum(h => h.PrecioTotal); //Suma solo los registros no pagados
+            get => Historial.Where(h => !h.Pagado).Sum(h => h.PrecioTotal); //Sumo solo los registros no pagados
         }
 
 
@@ -93,9 +93,9 @@ namespace JornaPay.ViewModels
                 if (_trabajadorSeleccionado != value)
                 {
                     _trabajadorSeleccionado = value;
-                    OnPropertyChanged(nameof(TrabajadorSeleccionado)); //Notifica cambios
-                    OnPropertyChanged(nameof(PuedeActualizar)); //Actualiza al trabjador seleccionado
-                    OnPropertyChanged(nameof(PuedeEliminar));   //Elimina al trabjador seleccionado
+                    OnPropertyChanged(nameof(TrabajadorSeleccionado)); //Notifico cambios
+                    OnPropertyChanged(nameof(PuedeActualizar)); //Actualizo al trabjador seleccionado
+                    OnPropertyChanged(nameof(PuedeEliminar));   //Elimino al trabjador seleccionado
                     CargarHistorialTrabajadorAsync(); 
                 }
             }
@@ -497,7 +497,7 @@ namespace JornaPay.ViewModels
                     Historial.Add(registro);
                 }
 
-                ActualizarTotalPendiente(); // 🔥 Se actualiza el total pendiente al abrir la página
+                ActualizarTotalPendiente(); //Actualizo el total pendiente al abrir la página
             }
             catch (Exception ex)
             {
