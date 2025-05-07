@@ -109,8 +109,14 @@ namespace JornaPay.ViewModels
         {
             _trabajadoresServicio = TrabajadoresServicio.GetInstance();
             IniciarSesionCommand = new Command(IniciarSesion);
-            RegistrarUsuarioCommand = new Command(RegistrarUsuario);
-            CrearTrabajadorCommand = new Command(CrearTrabajador);
+            RegistrarUsuarioCommand = new Command(async () =>
+            {
+                var datosUsuario = await MostrarRegistroUsuarioDialogoAsync();
+                if (datosUsuario.HasValue)
+                {
+                    await RegistrarUsuario(datosUsuario.Value.NombreUsuario, datosUsuario.Value.Contrasenya);
+                }
+            }); CrearTrabajadorCommand = new Command(CrearTrabajador);
             AnyadirDatosCommand = new Command(AnyadirDatos);
             ActualizarDatosCommand = new Command(ActualizarDatos, CanActualizarDatos);
             GuardarRegistroCommand = new Command(GuardarRegistro);
@@ -133,20 +139,133 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", "Usuario o contraseña incorrectos.", "OK");
             }
         }
-
-        private async void RegistrarUsuario()
+        private async Task RegistrarUsuario(string nombreUsuario, string contrasenya)
         {
             try
             {
-                var usuario = new Usuario { NombreUsuario = NombreUsuario, Contraseña = Contraseña };
+                var usuario = new Usuario { NombreUsuario = nombreUsuario, Contraseña = contrasenya };
                 await _trabajadoresServicio.RegistrarUsuarioAsync(usuario);
                 await Application.Current.MainPage.DisplayAlert("Éxito", "Usuario registrado correctamente.", "OK");
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo registrar el usuario: {ex.Message}", "OK");
             }
         }
+
+        private async Task<(string NombreUsuario, string Contrasenya)?> MostrarRegistroUsuarioDialogoAsync()
+        {
+            var tcs = new TaskCompletionSource<(string NombreUsuario, string Contrasenya)?>();
+
+            Entry nombreEntry = new Entry
+            {
+                Placeholder = "Introduce tu usuario",
+                FontSize = 24,
+                BackgroundColor = Colors.White,
+                WidthRequest = 300, // Reducir el ancho
+                HorizontalOptions = LayoutOptions.Center, 
+                HorizontalTextAlignment = TextAlignment.Center
+            };
+
+            Entry contrasenyaEntry = new Entry
+            {
+                Placeholder = "Introduce tu contraseña",
+                IsPassword = true,
+                FontSize = 24,
+                BackgroundColor = Colors.White,
+                WidthRequest = 300, // Reducir el ancho
+                HorizontalOptions = LayoutOptions.Center,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
+
+            var modalPage = new ContentPage
+            {
+                Content = new VerticalStackLayout
+                {
+                    Padding = 20, 
+                    Spacing = 30, 
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    WidthRequest = 350, // Reducir el ancho del contenedor
+                    Children =
+                    {
+                        new Label
+                        {
+                            Text = "Registro de Usuario",
+                            FontSize = 32,
+                            HorizontalOptions = LayoutOptions.Center,
+                            VerticalOptions = LayoutOptions.Center,
+                            TextColor = Colors.Black
+                        },
+                        new Frame
+                        {
+                            BorderColor = Colors.Transparent,
+                            HasShadow = false,
+                            BackgroundColor = Colors.Transparent,
+                            Padding = 5,
+                            HorizontalOptions = LayoutOptions.Center, 
+                            VerticalOptions = LayoutOptions.Center,
+                            WidthRequest = 320, // Reducir ancho del cuadro
+                            Content = nombreEntry
+                        },
+                        new Frame
+                        {
+                            BorderColor = Colors.Transparent,
+                            HasShadow = false,
+                            BackgroundColor = Colors.Transparent,
+                            Padding = 5,
+                            HorizontalOptions = LayoutOptions.Center,
+                            VerticalOptions = LayoutOptions.Center,
+                            WidthRequest = 320, // Reducir ancho del cuadro
+                            Content = contrasenyaEntry
+                        },
+                        new Button
+                        {
+                            Text = "Confirmar",
+                            BackgroundColor = Colors.Green,
+                            TextColor = Colors.White,
+                            FontSize = 24, 
+                            WidthRequest = 200, 
+                            HeightRequest = 60,
+                            HorizontalOptions = LayoutOptions.Center,
+                            VerticalOptions = LayoutOptions.Center,
+                            Command = new Command(() =>
+                            {
+                                if (!string.IsNullOrWhiteSpace(nombreEntry.Text) && !string.IsNullOrWhiteSpace(contrasenyaEntry.Text))
+                                {
+                                    tcs.SetResult((nombreEntry.Text, contrasenyaEntry.Text));
+                                    Application.Current.MainPage.Navigation.PopModalAsync();
+                                }
+                                else
+                                {
+                                    Application.Current.MainPage.DisplayAlert("Error", "Todos los campos deben estar rellenados.", "OK");
+                                }
+                            })
+                        },
+                        new Button
+                        {
+                            Text = "Cancelar",
+                            BackgroundColor = Colors.Red,
+                            TextColor = Colors.White,
+                            FontSize = 24,
+                            WidthRequest = 200,
+                            HeightRequest = 60,
+                            HorizontalOptions = LayoutOptions.Center,
+                            VerticalOptions = LayoutOptions.Center,
+                            Command = new Command(() =>
+                            {
+                                tcs.SetResult(null);
+                                Application.Current.MainPage.Navigation.PopModalAsync();
+                            })
+                        }
+                    }
+                }
+            };
+
+            await Application.Current.MainPage.Navigation.PushModalAsync(modalPage);
+            return await tcs.Task;
+        }
+
 
         private async void CrearTrabajador()
         {
@@ -321,7 +440,7 @@ namespace JornaPay.ViewModels
 
             bool confirmar = await Application.Current.MainPage.DisplayAlert("Confirmación", $"¿Seguro que desea eliminar al trabajador {TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}?", "Sí", "No");
             if (!confirmar) return;
-
+                
             try
             {
                 await _trabajadoresServicio.EliminarTrabajadorAsync(TrabajadorSeleccionado.Id);
