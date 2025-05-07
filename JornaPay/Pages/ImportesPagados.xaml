@@ -13,6 +13,12 @@
                    HorizontalOptions="Center"
                    TextColor="Black" />
 
+            <Label Text="{Binding ImporteTotalPagado, StringFormat='Total pagado: {0:C}'}"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="Green" />
+            
             <!-- Buscador por nombre -->
             <Entry Placeholder="Buscar por Nombre" Text="{Binding NombreBusqueda}" BackgroundColor="White" />
             <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />

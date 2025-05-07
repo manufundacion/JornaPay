@@ -14,6 +14,8 @@ namespace JornaPay.ViewModels
         private readonly TrabajadoresServicio _trabajadoresServicio;
         private string _nombreBusqueda;
         private List<TrabajadorDatos> _trabajadores;
+        private decimal _importeTotalPagado;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -37,30 +39,53 @@ namespace JornaPay.ViewModels
             }
         }
 
+        public decimal ImporteTotalPagado
+        {
+            get => _importeTotalPagado;
+            set
+            {
+                _importeTotalPagado = value;
+                OnPropertyChanged(nameof(ImporteTotalPagado));
+            }
+        }
+
         public ICommand BuscarCommand => new Command(async () =>
         {
             var listaCompleta = await _trabajadoresServicio.ObtenerTodosTrabajadoresAsync();
-            var pagados = new List<TrabajadorDatos>();
+            var pagadosAgrupados = new Dictionary<string, decimal>();
 
             foreach (var trabajador in listaCompleta)
             {
                 var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
                 var registrosPagados = historial.Where(h => h.Pagado);
 
-                if (registrosPagados.Any())
+                foreach (var registro in registrosPagados)
                 {
-                    pagados.Add(new TrabajadorDatos
+                    string clave = trabajador.Nombre + " " + trabajador.Apellidos;
+
+                    if (pagadosAgrupados.ContainsKey(clave))
                     {
-                        Nombre = trabajador.Nombre + " " + trabajador.Apellidos,
-                        ImporteTotal = registrosPagados.Sum(r => r.PrecioTotal), //Sumo los importes
-                        Pagado = true
-                    });
+                        pagadosAgrupados[clave] += registro.PrecioTotal; //Sumo los importes si ya existen
+                    }
+                    else
+                    {
+                        pagadosAgrupados[clave] = registro.PrecioTotal; //Agrego un nuevo trabajador
+                    }
                 }
             }
 
-            Trabajadores = pagados;
+            // Convierto el diccionario en una lista de TrabajadorDatos
+            Trabajadores = pagadosAgrupados.Select(t => new TrabajadorDatos
+            {
+                Nombre = t.Key,
+                ImporteTotal = t.Value,
+                Pagado = true
+            }).ToList();
+
+            ImporteTotalPagado = pagadosAgrupados.Values.Sum(); //Guardo el total pagado
             OnPropertyChanged(nameof(Trabajadores));
         });
+
 
 
         public ImportesPagadosViewModel(TrabajadoresServicio trabajadoresServicio)
