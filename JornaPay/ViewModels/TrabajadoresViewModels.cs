@@ -322,14 +322,32 @@ namespace JornaPay.ViewModels
             bool confirmar = await Application.Current.MainPage.DisplayAlert("Confirmación", $"¿Seguro que desea eliminar al trabajador {TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}?", "Sí", "No");
             if (!confirmar) return;
 
-            await _trabajadoresServicio.EliminarTrabajadorAsync(TrabajadorSeleccionado.Id);
-            Trabajadores.Remove(TrabajadorSeleccionado);
-            TrabajadorSeleccionado = null;
-            OnPropertyChanged(nameof(Trabajadores));
-            OnPropertyChanged(nameof(TrabajadorSeleccionado));
+            try
+            {
+                await _trabajadoresServicio.EliminarTrabajadorAsync(TrabajadorSeleccionado.Id);
+                Trabajadores.Remove(TrabajadorSeleccionado);
 
-            await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador eliminado correctamente.", "OK");
+                //Busco y elimino la página del trabajador en Shell
+                var itemAEliminar = Shell.Current.Items.FirstOrDefault(item => item.Title == $"{TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}");
+                if (itemAEliminar != null)
+                {
+                    Shell.Current.Items.Remove(itemAEliminar); //Elimino la página del Shell
+                }
+
+                TrabajadorSeleccionado = null;
+
+                //Fuerzo la actualización de la lista
+                OnPropertyChanged(nameof(Trabajadores));
+                OnPropertyChanged(nameof(TrabajadorSeleccionado));
+
+                await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador eliminado correctamente.", "OK");
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo eliminar el trabajador: {ex.Message}", "OK");
+            }
         }
+
 
         private void CalcularTotal()
         {
