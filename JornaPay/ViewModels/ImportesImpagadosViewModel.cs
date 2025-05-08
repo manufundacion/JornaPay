@@ -72,16 +72,22 @@ namespace JornaPay.ViewModels
             foreach (var trabajador in listaCompleta)
             {
                 var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
+                if (historial == null) continue;
+
                 var registrosImpagados = historial.Where(h => !h.Pagado);
 
                 foreach (var registro in registrosImpagados)
                 {
                     string clave = trabajador.Nombre + " " + trabajador.Apellidos;
-                    impagadosAgrupados[clave] = impagadosAgrupados.GetValueOrDefault(clave, 0) + registro.PrecioTotal;
+                    if (!string.IsNullOrEmpty(trabajador.Nombre) && !string.IsNullOrEmpty(trabajador.Apellidos))
+                    {
+                        impagadosAgrupados[clave] = impagadosAgrupados.GetValueOrDefault(clave, 0) + registro.PrecioTotal;
+                    }
                 }
             }
 
-            Trabajadores = impagadosAgrupados.Select(t => new TrabajadorDatos
+            // Crear lista filtrada de trabajadores impagados
+            var trabajadoresImpagados = impagadosAgrupados.Select(t => new TrabajadorDatos
             {
                 Nombre = t.Key.Split(" ")[0],
                 Apellidos = t.Key.Substring(t.Key.IndexOf(" ") + 1),
@@ -89,9 +95,21 @@ namespace JornaPay.ViewModels
                 Pagado = false
             }).ToList();
 
-            ImporteTotalImpagado = Trabajadores.Sum(t => t.ImporteTotal);
+            //Filtrar por nombre si hay un criterio de búsqueda**
+            if (!string.IsNullOrWhiteSpace(NombreBusqueda))
+            {
+                trabajadoresImpagados = trabajadoresImpagados
+                    .Where(t => $"{t.Nombre} {t.Apellidos}".Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            Trabajadores = trabajadoresImpagados;
+            ImporteTotalImpagado = trabajadoresImpagados.Sum(t => t.ImporteTotal);
+
             OnPropertyChanged(nameof(Trabajadores));
+            OnPropertyChanged(nameof(ImporteTotalImpagado));
         }
+
 
         private async Task GenerarYDescargarPdf()
         {
