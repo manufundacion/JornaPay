@@ -34,6 +34,12 @@
                     TextColor="White"
                     IsEnabled="{Binding PuedeEliminar, Converter={StaticResource ObjectNotNullConverter}}" />
 
+            <Button Text="Descargar lista PDF"
+                    BackgroundColor="Green"
+                    TextColor="White"
+                    Command="{Binding DescargarListaPdfCommand}"
+                    Margin="10"/>
+
             <!-- ListView para mostrar los trabajadores -->
             <ListView ItemsSource="{Binding Trabajadores}"
                       SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"

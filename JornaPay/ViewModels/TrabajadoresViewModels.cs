@@ -112,6 +112,11 @@ namespace JornaPay.ViewModels
         public ICommand ActualizarTrabajadorCommand { get; }
         public ICommand EliminarTrabajadorCommand { get; }
 
+        public ICommand DescargarListaPdfCommand => new Command(async () =>
+        {
+            await GenerarYDescargarPdfAsync();
+        });
+
         public TrabajadoresViewModels()
         {
             _trabajadoresServicio = TrabajadoresServicio.GetInstance();
@@ -625,7 +630,66 @@ namespace JornaPay.ViewModels
             }
         }
 
+        private async Task GenerarYDescargarPdfAsync()
+        {
+            try
+            {
+#if ANDROID
+                var pdf = new Android.Graphics.Pdf.PdfDocument();
+                var pageInfo = new Android.Graphics.Pdf.PdfDocument.PageInfo.Builder(595, 842, 1).Create();
+                var page = pdf.StartPage(pageInfo);
+                var canvas = page.Canvas;
+                var paint = new Android.Graphics.Paint();
+                paint.Color = Android.Graphics.Color.Black;
+                paint.TextSize = 18;
 
+                int y = 50;
+                canvas.DrawText("Lista de Trabajadores", 50, y, paint);
+                y += 30;
+
+                foreach (var trabajador in Trabajadores)
+                {
+                    canvas.DrawText($"{trabajador.Nombre} {trabajador.Apellidos} - {trabajador.PrecioPorHora} €/h", 50, y, paint);
+                    y += 25;
+                }
+
+                pdf.FinishPage(page);
+
+                var fileName = "ListaTrabajadores.pdf";
+                var downloadsPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
+                var filePath = Path.Combine(downloadsPath.AbsolutePath, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    pdf.WriteTo(fileStream);
+                }
+
+                pdf.Close();
+
+                await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado en la carpeta Descargas.", "OK");
+
+                // 🔥 Abrir el archivo correctamente usando `FileProvider`
+                var fileUri = AndroidX.Core.Content.FileProvider.GetUriForFile(
+                    Android.App.Application.Context,
+                    $"{Android.App.Application.Context.PackageName}.fileprovider",
+                    new Java.IO.File(filePath));
+
+                var intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
+                intent.SetDataAndType(fileUri, "application/pdf");
+                intent.SetFlags(Android.Content.ActivityFlags.ClearTop |
+                                Android.Content.ActivityFlags.NewTask |
+                                Android.Content.ActivityFlags.GrantReadUriPermission);
+
+                Android.App.Application.Context.StartActivity(intent);
+#else
+        await Application.Current.MainPage.DisplayAlert("Error", "Generación de PDF solo disponible en Android.", "OK");
+#endif
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo generar el PDF: {ex.Message}", "OK");
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

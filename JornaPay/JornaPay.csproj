@@ -57,6 +57,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
 	  <None Remove="Resources\AppIcon\jornapay.png" />
 	</ItemGroup>
 
