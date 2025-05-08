@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -9,6 +9,7 @@ using JornaPay.Models;
 using JornaPay.Services;
 using iText.Layout;
 using iText.IO.Font.Constants;
+using JornaPay.Pages;
 
 namespace JornaPay.ViewModels
 {
@@ -173,7 +174,7 @@ namespace JornaPay.ViewModels
                 // Guardo los cambios en la base de datos
                 await _trabajadoresServicio.ActualizarHistorialAsync(registroBD);
 
-                //Limpio la selección para desactivar los botones
+                // Limpio la selección para desactivar los botones
                 ElementoSeleccionado = null;
                 OnPropertyChanged(nameof(ElementoSeleccionado));
 
@@ -182,8 +183,12 @@ namespace JornaPay.ViewModels
                 OnPropertyChanged(nameof(Historial));
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", $"Datos actualizados con éxito", "OK");
+
+                //Recargar la página manualmente para forzar la actualizacion de los datos
+                await Application.Current.MainPage.Navigation.PushAsync(new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora));
             }
         });
+
 
         public ICommand EliminarRegistroCommand => new Command(async () =>
         {

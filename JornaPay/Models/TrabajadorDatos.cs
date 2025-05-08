@@ -7,7 +7,7 @@ namespace JornaPay.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; } // Identificador único del registro
 
-        public int TrabajadorId { get; set; } // 🔥 Relación con Trabajador (clave foránea)
+        public int TrabajadorId { get; set; } // Relación con Trabajador (clave foránea)
 
         public DateTime Fecha { get; set; } // Fecha del registro, como texto formateado
 
