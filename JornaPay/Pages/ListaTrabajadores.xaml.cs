@@ -15,9 +15,20 @@ public partial class ListaTrabajadores : ContentPage
             MostrarErrorAsync(ex.Message);
         }
     }
-    private async void MostrarErrorAsync(string mensaje)
+    private async Task MostrarErrorAsync(string mensaje)
     {
         await Application.Current.MainPage.DisplayAlert("Error", $"Ocurrió un problema: {mensaje}", "OK");
     }
 
+    private async Task InscribirTrabajador(string nombre, string apellidos, decimal precioPorHora)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync($"NuevoTrabajador?nombre={nombre}&apellidos={apellidos}&precioPorHora={precioPorHora}");
+        }
+        catch (Exception ex)
+        {
+            await MostrarErrorAsync($"Error al inscribir el trabajador: {ex.Message}");
+        }
+    }
 }

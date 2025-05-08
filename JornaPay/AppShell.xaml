@@ -40,5 +40,5 @@
     </FlyoutItem>
 
     <!-- Ruta para NuevoTrabajador -->
-    <ShellContent Route="NuevoTrabajador" ContentTemplate="{DataTemplate local:NuevoTrabajador}" />
+    <ShellContent Route="NuevoTrabajador" ContentTemplate="{DataTemplate local:NuevoTrabajador}" IsVisible="False" />
 </Shell>
