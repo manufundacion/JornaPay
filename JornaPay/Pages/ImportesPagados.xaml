@@ -23,6 +23,11 @@
             <Entry Placeholder="Buscar por Nombre" Text="{Binding NombreBusqueda}" BackgroundColor="White" />
             <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />
 
+            <Button Text="Descargar Importes Pagados PDF" 
+            Command="{Binding DescargarPdfCommand}" 
+            BackgroundColor="DarkRed" 
+            TextColor="White"/>
+
             <!-- ListView filtrado con trabajadores pagados -->
             <ListView ItemsSource="{Binding Trabajadores}">
                 <ListView.ItemTemplate>
