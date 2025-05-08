@@ -2,11 +2,15 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using iText.Kernel.Font;
+using iText.Kernel.Pdf;
+using iText.Layout.Element;
 using JornaPay.Models;
 using JornaPay.Pages;
 using JornaPay.Services;
-using Microsoft.Maui.Storage;
-using SQLite;
+using iText.Layout;
+using iText.IO.Font.Constants;
+
 
 namespace JornaPay.ViewModels
 {
@@ -634,56 +638,36 @@ namespace JornaPay.ViewModels
         {
             try
             {
-#if ANDROID
-                var pdf = new Android.Graphics.Pdf.PdfDocument();
-                var pageInfo = new Android.Graphics.Pdf.PdfDocument.PageInfo.Builder(595, 842, 1).Create();
-                var page = pdf.StartPage(pageInfo);
-                var canvas = page.Canvas;
-                var paint = new Android.Graphics.Paint();
-                paint.Color = Android.Graphics.Color.Black;
-                paint.TextSize = 18;
-
-                int y = 50;
-                canvas.DrawText("Lista de Trabajadores", 50, y, paint);
-                y += 30;
-
-                foreach (var trabajador in Trabajadores)
+                if (Trabajadores == null || !Trabajadores.Any())
                 {
-                    canvas.DrawText($"{trabajador.Nombre} {trabajador.Apellidos} - {trabajador.PrecioPorHora} €/h", 50, y, paint);
-                    y += 25;
+                    await Application.Current.MainPage.DisplayAlert("Error", "No hay trabajadores disponibles para generar el PDF.", "OK");
+                    return;
                 }
 
-                pdf.FinishPage(page);
+                string fileName = "ListaTrabajadores.pdf";
+                string filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
 
-                var fileName = "ListaTrabajadores.pdf";
-                var downloadsPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
-                var filePath = Path.Combine(downloadsPath.AbsolutePath, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (PdfWriter writer = new PdfWriter(filePath))
+                using (PdfDocument pdf = new PdfDocument(writer))
+                using (Document doc = new Document(pdf))
                 {
-                    pdf.WriteTo(fileStream);
+                    var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                    doc.Add(new Paragraph("Lista de Trabajadores").SetFont(boldFont).SetFontSize(16));
+                    doc.Add(new Paragraph(" "));
+
+                    foreach (var trabajador in Trabajadores)
+                    {
+                        doc.Add(new Paragraph($"{trabajador.Nombre} {trabajador.Apellidos} - {trabajador.PrecioPorHora} €/h"));
+                    }
                 }
 
-                pdf.Close();
+                await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado correctamente.", "OK");
 
-                await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado en la carpeta Descargas.", "OK");
-
-                // 🔥 Abrir el archivo correctamente usando `FileProvider`
-                var fileUri = AndroidX.Core.Content.FileProvider.GetUriForFile(
-                    Android.App.Application.Context,
-                    $"{Android.App.Application.Context.PackageName}.fileprovider",
-                    new Java.IO.File(filePath));
-
-                var intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
-                intent.SetDataAndType(fileUri, "application/pdf");
-                intent.SetFlags(Android.Content.ActivityFlags.ClearTop |
-                                Android.Content.ActivityFlags.NewTask |
-                                Android.Content.ActivityFlags.GrantReadUriPermission);
-
-                Android.App.Application.Context.StartActivity(intent);
-#else
-        await Application.Current.MainPage.DisplayAlert("Error", "Generación de PDF solo disponible en Android.", "OK");
-#endif
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath),
+                });
             }
             catch (Exception ex)
             {

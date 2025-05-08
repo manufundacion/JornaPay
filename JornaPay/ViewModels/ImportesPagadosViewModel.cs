@@ -1,11 +1,13 @@
-﻿using JornaPay.Models;
-using JornaPay.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Input;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Kernel.Font;
+using JornaPay.Models;
+using JornaPay.Services;
+using iText.IO.Font;
+using iText.IO.Font.Constants;
 
 namespace JornaPay.ViewModels
 {
@@ -124,60 +126,41 @@ namespace JornaPay.ViewModels
         {
             try
             {
-#if ANDROID
-        var pdf = new Android.Graphics.Pdf.PdfDocument();
-        var pageInfo = new Android.Graphics.Pdf.PdfDocument.PageInfo.Builder(595, 842, 1).Create();
-        var page = pdf.StartPage(pageInfo);
-        var canvas = page.Canvas;
-        var paint = new Android.Graphics.Paint();
-        paint.Color = Android.Graphics.Color.Black;
-        paint.TextSize = 18;
+                if (Trabajadores == null || !Trabajadores.Any())
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No hay datos disponibles para generar el PDF.", "OK");
+                    return;
+                }
 
-        int y = 50;
-        canvas.DrawText("Importes Pagados", 50, y, paint);
-        y += 30;
+                string fileName = "ImportesPagados.pdf";
+                string filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
 
-        foreach (var trabajador in Trabajadores)
-        {
-            canvas.DrawText($"{trabajador.Nombre} {trabajador.Apellidos} - {trabajador.ImporteTotal:C}", 50, y, paint);
-            y += 25;
-        }
+                using (PdfWriter writer = new PdfWriter(filePath))
+                using (PdfDocument pdf = new PdfDocument(writer))
+                using (Document doc = new Document(pdf))
+                {
+                    var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
-        // 🔹 Agregar el total pagado **AL FINAL** de la lista
-        y += 30;
-        canvas.DrawText($"Total pagado: {ImporteTotalPagado:C}", 50, y, paint);
+                    doc.Add(new Paragraph($"Historial de Importes Pagados").SetFont(boldFont).SetFontSize(16));
+                    doc.Add(new Paragraph(" "));
 
-        pdf.FinishPage(page);
+                    foreach (var trabajador in Trabajadores)
+                    {
+                        doc.Add(new Paragraph($"Nombre: {trabajador.Nombre} {trabajador.Apellidos}"));
+                        doc.Add(new Paragraph($"Total Pagado: {trabajador.ImporteTotal:C}"));
+                        doc.Add(new Paragraph(" "));
+                    }
 
-        var fileName = "ImportesPagados.pdf";
-        var downloadsPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
-        var filePath = Path.Combine(downloadsPath.AbsolutePath, fileName);
+                    doc.Add(new Paragraph(" "));
+                    doc.Add(new Paragraph($"Total pagado: {ImporteTotalPagado:C}").SetFont(boldFont));
+                }
 
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-            pdf.WriteTo(fileStream);
-        }
+                await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado correctamente.", "OK");
 
-        pdf.Close();
-
-        await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado en la carpeta Descargas.", "OK");
-
-        //Abrir el archivo correctamente usando `FileProvider`
-        var fileUri = AndroidX.Core.Content.FileProvider.GetUriForFile(
-            Android.App.Application.Context,
-            $"{Android.App.Application.Context.PackageName}.fileprovider",
-            new Java.IO.File(filePath));
-
-        var intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
-        intent.SetDataAndType(fileUri, "application/pdf");
-        intent.SetFlags(Android.Content.ActivityFlags.ClearTop | 
-                        Android.Content.ActivityFlags.NewTask | 
-                        Android.Content.ActivityFlags.GrantReadUriPermission);
-
-        Android.App.Application.Context.StartActivity(intent);
-#else
-                await Application.Current.MainPage.DisplayAlert("Error", "Generación de PDF solo disponible en Android.", "OK");
-#endif
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath),
+                });
             }
             catch (Exception ex)
             {

@@ -1,11 +1,12 @@
 ﻿using JornaPay.Models;
 using JornaPay.Services;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Kernel.Font;
+using iText.IO.Font.Constants;
 
 namespace JornaPay.ViewModels
 {
@@ -96,68 +97,47 @@ namespace JornaPay.ViewModels
         {
             try
             {
-#if ANDROID
-        var pdf = new Android.Graphics.Pdf.PdfDocument();
-        var pageInfo = new Android.Graphics.Pdf.PdfDocument.PageInfo.Builder(595, 842, 1).Create();
-        var page = pdf.StartPage(pageInfo);
-        var canvas = page.Canvas;
-        var paint = new Android.Graphics.Paint();
-        paint.Color = Android.Graphics.Color.Black;
-        paint.TextSize = 18;
+                if (Trabajadores == null || !Trabajadores.Any())
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No hay trabajadores con importes impagados.", "OK");
+                    return;
+                }
 
-        int y = 50;
-        canvas.DrawText("Importes Impagados", 50, y, paint);
-        y += 30;
+                string fileName = "ImportesImpagados.pdf";
+                string filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
 
-        foreach (var trabajador in Trabajadores)
-        {
-            canvas.DrawText($"{trabajador.Nombre} {trabajador.Apellidos} - {trabajador.ImporteTotal:C}", 50, y, paint);
-            y += 25;
-        }
+                using (PdfWriter writer = new PdfWriter(filePath))
+                using (PdfDocument pdf = new PdfDocument(writer))
+                using (Document doc = new Document(pdf))
+                {
+                    var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
-        y += 30;
-        canvas.DrawText($"Total impagado: {ImporteTotalImpagado:C}", 50, y, paint);
+                    doc.Add(new Paragraph("Importes Impagados").SetFont(boldFont).SetFontSize(16));
+                    doc.Add(new Paragraph(" "));
 
-        pdf.FinishPage(page);
+                    foreach (var trabajador in Trabajadores)
+                    {
+                        doc.Add(new Paragraph($"Nombre: {trabajador.Nombre} {trabajador.Apellidos}"));
+                        doc.Add(new Paragraph($"Importe Impagado: {trabajador.ImporteTotal:C}"));
+                        doc.Add(new Paragraph(" "));
+                    }
 
-        var fileName = "ImportesImpagados.pdf";
-        var downloadsPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads);
-        var filePath = Path.Combine(downloadsPath.AbsolutePath, fileName);
+                    doc.Add(new Paragraph(" "));
+                    doc.Add(new Paragraph($"Total impagado: {ImporteTotalImpagado:C}").SetFont(boldFont));
+                }
 
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-            pdf.WriteTo(fileStream);
-        }
+                await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado correctamente.", "OK");
 
-        pdf.Close();
-
-        await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado en la carpeta Descargas.", "OK");
-
-        //Abrir el PDF automáticamente después de guardarlo
-        var file = new Java.IO.File(filePath);
-        var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(
-            Android.App.Application.Context,
-            $"{Android.App.Application.Context.PackageName}.fileprovider",
-            file);
-
-        var intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
-        intent.SetDataAndType(uri, "application/pdf");
-        intent.SetFlags(Android.Content.ActivityFlags.NoHistory | 
-                        Android.Content.ActivityFlags.NewTask | 
-                        Android.Content.ActivityFlags.GrantReadUriPermission);
-
-        Android.App.Application.Context.StartActivity(intent);
-
-#else
-                await Application.Current.MainPage.DisplayAlert("Error", "Generación de PDF solo disponible en Android.", "OK");
-#endif
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath),
+                });
             }
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo generar el PDF: {ex.Message}", "OK");
             }
         }
-
 
         protected void OnPropertyChanged(string propertyName)
         {

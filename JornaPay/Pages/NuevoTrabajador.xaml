@@ -60,6 +60,14 @@
              BackgroundColor="Red" 
              TextColor="White" 
              IsEnabled="{Binding ElementoSeleccionado, Converter={StaticResource ObjectNotNullConverter}}" />
+            <Button Text="Descargar Historial del Trabajador PDF" 
+             Command="{Binding DescargarHistorialPdfCommand}" 
+             BackgroundColor="DarkRed" 
+             TextColor="White"
+             IsEnabled="{Binding Historial.Count, Mode=OneWay}"
+             Padding="10,5" />
+
+
 
             <!-- Historial del Trabajador -->
             <Label Text="Historial del Trabajador:" 

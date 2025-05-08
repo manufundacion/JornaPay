@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using iText.Kernel.Font;
+using iText.Kernel.Pdf;
+using iText.Layout.Element;
 using JornaPay.Models;
 using JornaPay.Services;
+using iText.Layout;
+using iText.IO.Font.Constants;
 
 namespace JornaPay.ViewModels
 {
@@ -207,6 +211,10 @@ namespace JornaPay.ViewModels
             await Application.Current.MainPage.DisplayAlert("Éxito", "Registro eliminado correctamente.", "OK");
         });
 
+        public ICommand DescargarHistorialPdfCommand { get; }
+
+
+
 
         public NuevoTrabajadorViewModels(string nombre, string apellidos, decimal precioPorHora)
         {
@@ -215,6 +223,7 @@ namespace JornaPay.ViewModels
             Apellidos = apellidos;
             PrecioPorHora = precioPorHora;
             GuardarRegistroCommand = new Command(GuardarRegistro);
+            DescargarHistorialPdfCommand = new Command(async () => await GenerarYDescargarHistorialPdf());
         }
 
 
@@ -415,12 +424,77 @@ namespace JornaPay.ViewModels
             await Application.Current.MainPage.Navigation.PushModalAsync(modalPage);
             return await tcs.Task;
         }
+        private async Task GenerarYDescargarHistorialPdf()
+        {
+            try
+            {
+                if (Historial == null || !Historial.Any())
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No hay historial disponible para generar el PDF.", "OK");
+                    return;
+                }
+
+                string fileName = $"Historial_{Nombre}_{Apellidos}.pdf";
+                string filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+
+                using (PdfWriter writer = new PdfWriter(filePath))
+                using (PdfDocument pdf = new PdfDocument(writer))
+                using (Document doc = new Document(pdf))
+                {
+                    var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                    doc.Add(new Paragraph($"Historial de {Nombre} {Apellidos}").SetFont(boldFont).SetFontSize(16));
+                    doc.Add(new Paragraph(" "));
+
+                    decimal totalPagado = 0;
+                    decimal totalImpagado = 0;
+
+                    foreach (var registro in Historial)
+                    {
+                        doc.Add(new Paragraph($"Fecha: {registro.Fecha:dd/MM/yyyy}"));
+                        doc.Add(new Paragraph($"Horas Trabajadas: {registro.HorasRealizadas}"));
+
+                        // 🔹 Convertir `EstadoPago` a `bool`
+                        bool estadoPago = registro.EstadoPago?.ToLower() == "true" || registro.EstadoPago == "Sí";
+
+                        doc.Add(new Paragraph($"Pagado: {(estadoPago ? "Sí" : "No")}"));
+                        doc.Add(new Paragraph($"Total: {registro.PrecioTotal:C}"));
+                        doc.Add(new Paragraph(" "));
+
+                        if (estadoPago)
+                            totalPagado += registro.PrecioTotal;
+                        else
+                            totalImpagado += registro.PrecioTotal;
+                    }
+
+                    // 🔹 Agregar la suma total al FINAL de todos los registros
+                    doc.Add(new Paragraph(" "));
+                    doc.Add(new Paragraph($"Total Pagado: {totalPagado:C}").SetFont(boldFont));
+                    doc.Add(new Paragraph($"Total Impagado: {totalImpagado:C}").SetFont(boldFont));
+                }
+
+                await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado correctamente.", "OK");
+
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath),
+                });
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo generar el PDF: {ex.Message}", "OK");
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
         }
+
     }
 }
