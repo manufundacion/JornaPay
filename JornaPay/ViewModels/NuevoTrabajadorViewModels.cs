@@ -454,7 +454,7 @@ namespace JornaPay.ViewModels
                         doc.Add(new Paragraph($"Fecha: {registro.Fecha:dd/MM/yyyy}"));
                         doc.Add(new Paragraph($"Horas Trabajadas: {registro.HorasRealizadas}"));
 
-                        // 🔹 Convertir `EstadoPago` a `bool`
+                        //Convierto el EstadoPago a booleano
                         bool estadoPago = registro.EstadoPago?.ToLower() == "true" || registro.EstadoPago == "Sí";
 
                         doc.Add(new Paragraph($"Pagado: {(estadoPago ? "Sí" : "No")}"));
@@ -467,7 +467,7 @@ namespace JornaPay.ViewModels
                             totalImpagado += registro.PrecioTotal;
                     }
 
-                    // 🔹 Agregar la suma total al FINAL de todos los registros
+                    //Agrego la suma total al final de todos los registros
                     doc.Add(new Paragraph(" "));
                     doc.Add(new Paragraph($"Total Pagado: {totalPagado:C}").SetFont(boldFont));
                     doc.Add(new Paragraph($"Total Impagado: {totalImpagado:C}").SetFont(boldFont));
