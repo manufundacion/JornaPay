@@ -23,6 +23,12 @@
             <Entry Placeholder="Buscar por Nombre" Text="{Binding NombreBusqueda}" BackgroundColor="White" />
             <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />
 
+            <Button Text="Descargar Importes Impagados PDF" 
+            Command="{Binding DescargarPdfCommand}" 
+            BackgroundColor="Green" 
+            TextColor="White"/>
+
+
             <!-- ListView filtrado con trabajadores impagados -->
             <ListView ItemsSource="{Binding Trabajadores}">
                 <ListView.ItemTemplate>

@@ -162,7 +162,7 @@ namespace JornaPay.ViewModels
 
         await Application.Current.MainPage.DisplayAlert("Éxito", "PDF guardado en la carpeta Descargas.", "OK");
 
-        // 🔥 Abrir el archivo correctamente usando `FileProvider`
+        //Abrir el archivo correctamente usando `FileProvider`
         var fileUri = AndroidX.Core.Content.FileProvider.GetUriForFile(
             Android.App.Application.Context,
             $"{Android.App.Application.Context.PackageName}.fileprovider",
