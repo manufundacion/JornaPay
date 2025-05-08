@@ -169,18 +169,17 @@ namespace JornaPay.ViewModels
                 // Guardo los cambios en la base de datos
                 await _trabajadoresServicio.ActualizarHistorialAsync(registroBD);
 
-                // Vuelvo a asignar el ElementoSeleccionado para que actualice los cambios
-                ElementoSeleccionado = await _trabajadoresServicio.ObtenerRegistroAsync(registroBD.Id);
+                //Limpio la selección para desactivar los botones
+                ElementoSeleccionado = null;
+                OnPropertyChanged(nameof(ElementoSeleccionado));
 
                 // Recargo el historial para reflejar los cambios
                 await CargarHistorialAsync();
                 OnPropertyChanged(nameof(Historial));
-                OnPropertyChanged(nameof(ElementoSeleccionado));
+
                 await Application.Current.MainPage.DisplayAlert("Éxito", $"Datos actualizados con éxito", "OK");
             }
         });
-
-
 
         public ICommand EliminarRegistroCommand => new Command(async () =>
         {
@@ -197,12 +196,17 @@ namespace JornaPay.ViewModels
 
             await _trabajadoresServicio.EliminarHistorialAsync(ElementoSeleccionado.Id);
 
-            //Recargo el historial para reflejar la eliminación
+            //Limpio la selección para desactivar los botones
+            ElementoSeleccionado = null;
+            OnPropertyChanged(nameof(ElementoSeleccionado));
+
+            // Recargo el historial para reflejar la eliminación
             await CargarHistorialAsync();
             OnPropertyChanged(nameof(Historial));
 
             await Application.Current.MainPage.DisplayAlert("Éxito", "Registro eliminado correctamente.", "OK");
         });
+
 
         public NuevoTrabajadorViewModels(string nombre, string apellidos, decimal precioPorHora)
         {
