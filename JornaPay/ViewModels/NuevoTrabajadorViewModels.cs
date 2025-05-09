@@ -244,15 +244,15 @@ namespace JornaPay.ViewModels
                 Historial.Clear();
 
                 var trabajador = await _trabajadoresServicio.ObtenerTrabajadorAsync(Nombre, Apellidos);
-                if (trabajador == null)
+
+                if (trabajador == null || trabajador.NombreUsuario != SesionUsuario.NombreUsuarioActual)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "El trabajador no existe.", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Aviso", "El trabajador no existe o no pertenece a este usuario.", "OK");
                     return;
                 }
 
                 var historialTrabajador = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
 
-                // Muestro el aviso solo si la lista sigue vacía después de cargar la consulta
                 if (historialTrabajador.Count == 0)
                 {
                     await Application.Current.MainPage.DisplayAlert("Aviso", "No se encontraron registros de historial en la base de datos.", "OK");
@@ -266,7 +266,7 @@ namespace JornaPay.ViewModels
                             Historial.Add(registro);
                         }
                         OnPropertyChanged(nameof(Historial)); //Actualizo el historial
-                        ActualizarTotalPendiente(); //Se actualiza el total pendiente de pago
+                        ActualizarTotalPendiente();
                     });
                 }
             }

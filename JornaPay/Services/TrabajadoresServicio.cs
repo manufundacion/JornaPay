@@ -116,15 +116,18 @@ namespace JornaPay.Services
         public async Task<Trabajador?> ObtenerTrabajadorAsync(string nombre, string apellidos)
         {
             var trabajador = await _conn.Table<Trabajador>()
-                .FirstOrDefaultAsync(t => t.Nombre == nombre && t.Apellidos == apellidos);
+                .FirstOrDefaultAsync(t => t.Nombre == nombre
+                                        && t.Apellidos == apellidos
+                                        && t.NombreUsuario == SesionUsuario.NombreUsuarioActual);
 
             if (trabajador == null)
             {
-                throw new Exception($"No se encontró el trabajador con nombre: {nombre} y apellidos: {apellidos}");
+                throw new Exception($"No se encontró el trabajador con nombre: {nombre} y apellidos: {apellidos} para este usuario.");
             }
 
             return trabajador;
         }
+
 
         public async Task<List<Trabajador>> BuscarTrabajadoresAsync(string nombreBusqueda)
         {
