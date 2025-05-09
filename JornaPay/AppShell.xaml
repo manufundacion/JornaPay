@@ -40,7 +40,7 @@
     </FlyoutItem>
 
     <!-- Cerrar sesión -->
-    <FlyoutItem Title="Cerrar Sesión" Icon="logout.png">
+    <FlyoutItem Title="Cerrar Sesión" Icon="logout.png" IsVisible="True">
         <ShellContent Title="Cerrar Sesión" ContentTemplate="{DataTemplate local:CerrarSesion}" />
     </FlyoutItem>
 

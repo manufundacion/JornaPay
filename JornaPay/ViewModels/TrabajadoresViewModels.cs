@@ -582,12 +582,23 @@ namespace JornaPay.ViewModels
                 {
                     try
                     {
-                        // Eliminar elementos previos en Shell evitando errores de concurrencia
+                        // 🔹 **Mantener opción "Cerrar Sesión"**
+                        if (!Shell.Current.Items.Any(item => item.Title == "Cerrar Sesión"))
+                        {
+                            Shell.Current.Items.Add(new FlyoutItem
+                            {
+                                Title = "Cerrar Sesión",
+                                Items = { new ShellContent { ContentTemplate = new DataTemplate(() => new CerrarSesion()) } }
+                            });
+                        }
+
+                        //Elimino los elementos duplicados
                         var itemsToRemove = Shell.Current.Items.Where(item =>
                             item is FlyoutItem flyoutItem &&
                             flyoutItem.Title != "Inscripción de Trabajadores" &&
                             flyoutItem.Title != "Lista de Trabajadores" &&
-                            flyoutItem.Title != "Importes"
+                            flyoutItem.Title != "Importes" &&
+                            flyoutItem.Title != "Cerrar Sesión" 
                         ).ToList();
 
                         foreach (var item in itemsToRemove)
@@ -595,11 +606,12 @@ namespace JornaPay.ViewModels
                             Shell.Current.Items.Remove(item);
                         }
 
+                        //Añado los trabajadores al menú
                         foreach (var trabajador in trabajadores)
                         {
                             Trabajadores.Add(trabajador);
 
-                            //Agregar trabajador al Shell si no existe aún
+                            // Agrego trabajador al Shell si no existe aún
                             if (!Shell.Current.Items.Any(item => item.Title == $"{trabajador.Nombre} {trabajador.Apellidos}"))
                             {
                                 var nuevoFlyoutItem = new FlyoutItem
@@ -633,6 +645,7 @@ namespace JornaPay.ViewModels
                 Console.WriteLine($"Error en CargarTrabajadoresAsync: {ex.Message}");
             }
         }
+
 
         private async Task GenerarYDescargarPdfAsync()
         {
