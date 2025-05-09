@@ -184,7 +184,7 @@ namespace JornaPay.ViewModels
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", $"Datos actualizados con éxito", "OK");
 
-                //Recargar la página manualmente para forzar la actualizacion de los datos
+                //Recargo la página manualmente para forzar la actualizacion de los datos
                 await Application.Current.MainPage.Navigation.PushAsync(new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora));
             }
         });

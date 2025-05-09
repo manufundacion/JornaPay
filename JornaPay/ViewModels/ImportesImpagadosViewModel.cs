@@ -62,54 +62,55 @@ namespace JornaPay.ViewModels
             BuscarCommand.Execute(null);
         }
 
-
-
         private async Task BuscarTrabajadores()
         {
-            var listaCompleta = await _trabajadoresServicio.ObtenerTodosTrabajadoresAsync();
-            var impagadosAgrupados = new Dictionary<string, decimal>();
+            if (string.IsNullOrEmpty(SesionUsuario.NombreUsuarioActual))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No hay un usuario activo.", "OK");
+                return;
+            }
+
+            var listaCompleta = await _trabajadoresServicio.ObtenerTrabajadoresPorUsuarioAsync(SesionUsuario.NombreUsuarioActual);
+            var registrosAgrupados = new Dictionary<string, decimal>();
 
             foreach (var trabajador in listaCompleta)
             {
                 var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
                 if (historial == null) continue;
 
-                var registrosImpagados = historial.Where(h => !h.Pagado);
+                var registrosFiltrados = historial.Where(h => !h.Pagado);            
 
-                foreach (var registro in registrosImpagados)
+                foreach (var registro in registrosFiltrados)
                 {
-                    string clave = trabajador.Nombre + " " + trabajador.Apellidos;
-                    if (!string.IsNullOrEmpty(trabajador.Nombre) && !string.IsNullOrEmpty(trabajador.Apellidos))
-                    {
-                        impagadosAgrupados[clave] = impagadosAgrupados.GetValueOrDefault(clave, 0) + registro.PrecioTotal;
-                    }
+                    string clave = $"{trabajador.Nombre} {trabajador.Apellidos}";
+                    registrosAgrupados[clave] = registrosAgrupados.GetValueOrDefault(clave, 0) + registro.PrecioTotal;
                 }
             }
 
-            // Crear lista filtrada de trabajadores impagados
-            var trabajadoresImpagados = impagadosAgrupados.Select(t => new TrabajadorDatos
+            var trabajadoresFiltrados = registrosAgrupados.Select(t => new TrabajadorDatos
             {
                 Nombre = t.Key.Split(" ")[0],
                 Apellidos = t.Key.Substring(t.Key.IndexOf(" ") + 1),
                 ImporteTotal = t.Value,
-                Pagado = false
+                Pagado = false 
             }).ToList();
 
-            //Filtrar por nombre si hay un criterio de búsqueda**
+            //Realizo la búsqueda por nombre
             if (!string.IsNullOrWhiteSpace(NombreBusqueda))
             {
-                trabajadoresImpagados = trabajadoresImpagados
-                    .Where(t => $"{t.Nombre} {t.Apellidos}".Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase))
+                var nombreBusquedaLower = NombreBusqueda.ToLower();
+                trabajadoresFiltrados = trabajadoresFiltrados
+                    .Where(t => $"{t.Nombre} {t.Apellidos}".ToLower().Contains(nombreBusquedaLower))
                     .ToList();
             }
 
-            Trabajadores = trabajadoresImpagados;
-            ImporteTotalImpagado = trabajadoresImpagados.Sum(t => t.ImporteTotal);
+
+            Trabajadores = trabajadoresFiltrados;
+            ImporteTotalImpagado = trabajadoresFiltrados.Sum(t => t.ImporteTotal);// Calculo el total impagado
 
             OnPropertyChanged(nameof(Trabajadores));
-            OnPropertyChanged(nameof(ImporteTotalImpagado));
+            OnPropertyChanged(nameof(ImporteTotalImpagado)); //Actualizo el importe
         }
-
 
         private async Task GenerarYDescargarPdf()
         {

@@ -62,47 +62,30 @@ namespace JornaPay.ViewModels
 
         private async Task BuscarTrabajadores()
         {
-            if (_trabajadoresServicio == null)
+            if (string.IsNullOrEmpty(SesionUsuario.NombreUsuarioActual))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "El servicio de trabajadores no está inicializado.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", "No hay un usuario activo.", "OK");
                 return;
             }
 
-            var listaCompleta = await _trabajadoresServicio.ObtenerTodosTrabajadoresAsync();
-            if (listaCompleta == null)
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo obtener la lista de trabajadores.", "OK");
-                return;
-            }
-
-            var pagadosAgrupados = new Dictionary<string, decimal>();
+            var listaCompleta = await _trabajadoresServicio.ObtenerTrabajadoresPorUsuarioAsync(SesionUsuario.NombreUsuarioActual);
+            var registrosAgrupados = new Dictionary<string, decimal>();
 
             foreach (var trabajador in listaCompleta)
             {
                 var historial = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
                 if (historial == null) continue;
 
-                var registrosPagados = historial.Where(h => h.Pagado);
+                var registrosFiltrados = historial.Where(h => h.Pagado);
 
-                foreach (var registro in registrosPagados)
+                foreach (var registro in registrosFiltrados)
                 {
-                    string clave = trabajador.Nombre + " " + trabajador.Apellidos;
-
-                    if (!string.IsNullOrEmpty(trabajador.Nombre) && !string.IsNullOrEmpty(trabajador.Apellidos))
-                    {
-                        if (pagadosAgrupados.ContainsKey(clave))
-                        {
-                            pagadosAgrupados[clave] += registro.PrecioTotal;
-                        }
-                        else
-                        {
-                            pagadosAgrupados[clave] = registro.PrecioTotal;
-                        }
-                    }
+                    string clave = $"{trabajador.Nombre} {trabajador.Apellidos}";
+                    registrosAgrupados[clave] = registrosAgrupados.GetValueOrDefault(clave, 0) + registro.PrecioTotal;
                 }
             }
 
-            var trabajadoresFiltrados = pagadosAgrupados.Select(t => new TrabajadorDatos
+            var trabajadoresFiltrados = registrosAgrupados.Select(t => new TrabajadorDatos
             {
                 Nombre = t.Key.Split(" ")[0],
                 Apellidos = t.Key.Substring(t.Key.IndexOf(" ") + 1),
@@ -110,17 +93,22 @@ namespace JornaPay.ViewModels
                 Pagado = true
             }).ToList();
 
+            //Realizo la búsqueda por nombre
             if (!string.IsNullOrWhiteSpace(NombreBusqueda))
             {
+                var nombreBusquedaLower = NombreBusqueda.ToLower();
                 trabajadoresFiltrados = trabajadoresFiltrados
-                    .Where(t => $"{t.Nombre} {t.Apellidos}".Contains(NombreBusqueda, StringComparison.OrdinalIgnoreCase))
+                    .Where(t => $"{t.Nombre} {t.Apellidos}".ToLower().Contains(nombreBusquedaLower))
                     .ToList();
             }
 
             Trabajadores = trabajadoresFiltrados;
-            ImporteTotalPagado = trabajadoresFiltrados.Sum(t => t.ImporteTotal);
+            ImporteTotalPagado = trabajadoresFiltrados.Sum(t => t.ImporteTotal);// Calculo el total impagado
+
             OnPropertyChanged(nameof(Trabajadores));
+            OnPropertyChanged(nameof(ImporteTotalPagado)); //Actualizo el importe
         }
+
 
         private async Task GenerarYDescargarPdf()
         {

@@ -86,24 +86,18 @@ namespace JornaPay.Services
             }
         }
 
-
         public async Task CrearTrabajadorAsync(Trabajador trabajador)
         {
             var trabajadorExistente = await _conn.Table<Trabajador>()
-                .FirstOrDefaultAsync(t => t.Nombre == trabajador.Nombre && t.Apellidos == trabajador.Apellidos);
+                .FirstOrDefaultAsync(t => t.Nombre == trabajador.Nombre && t.Apellidos == trabajador.Apellidos && t.NombreUsuario == trabajador.NombreUsuario);
 
             if (trabajadorExistente == null)
             {
                 await _conn.InsertAsync(trabajador);
-                var confirmado = await ObtenerTrabajadorAsync(trabajador.Nombre, trabajador.Apellidos);
-                if (confirmado == null)
-                {
-                    throw new Exception("Error al guardar el trabajador en la base de datos.");
-                }
             }
             else
             {
-                throw new Exception($"El trabajador con nombre {trabajador.Nombre} y apellidos {trabajador.Apellidos} ya existe.");
+                throw new Exception($"El trabajador {trabajador.Nombre} {trabajador.Apellidos} ya existe para el usuario actual.");
             }
         }
 
