@@ -346,13 +346,21 @@ namespace JornaPay.ViewModels
                     Items = { new ShellContent { Title = $"{Nombre} {Apellidos}", Content = nuevaPagina } }
                 });
 
-                await Application.Current.MainPage.DisplayAlert("Éxito", "Nueva página añadida para el trabajador.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Éxito", $"El trabajador {Nombre} {Apellidos} se añadió al menú.", "OK");
+
+                // 🔹 **Vaciar los campos Nombre y Apellidos después de añadir el trabajador**
+                Nombre = string.Empty;
+                Apellidos = string.Empty;
+                OnPropertyChanged(nameof(Nombre));
+                OnPropertyChanged(nameof(Apellidos));
+
             }
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo añadir la página: {ex.Message}", "OK");
             }
         }
+
 
         private void GuardarRegistro()
         {
