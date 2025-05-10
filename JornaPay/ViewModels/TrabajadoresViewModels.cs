@@ -348,7 +348,7 @@ namespace JornaPay.ViewModels
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", $"El trabajador {Nombre} {Apellidos} se añadió al menú.", "OK");
 
-                // 🔹 **Vaciar los campos Nombre y Apellidos después de añadir el trabajador**
+                // Vacio los campos Nombre y Apellidos después de añadir el trabajador
                 Nombre = string.Empty;
                 Apellidos = string.Empty;
                 OnPropertyChanged(nameof(Nombre));
