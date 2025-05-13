@@ -24,7 +24,7 @@
             TextColor="White"/>
 
             <!-- ListView filtrado con trabajadores pagados -->
-            <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="380">
+            <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="365">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

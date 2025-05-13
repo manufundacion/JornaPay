@@ -25,7 +25,7 @@
 
 
             <!-- ListView filtrado con trabajadores impagados -->
-        <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="380">
+        <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="355">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

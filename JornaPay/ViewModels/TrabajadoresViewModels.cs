@@ -175,10 +175,10 @@ namespace JornaPay.ViewModels
             Entry nombreEntry = new Entry
             {
                 Placeholder = "Introduce tu usuario",
-                FontSize = 24,
+                FontSize = 19,
                 BackgroundColor = Colors.White,
-                WidthRequest = 300, // Reducir el ancho
-                HorizontalOptions = LayoutOptions.Center, 
+                WidthRequest = 230, 
+                HorizontalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center
             };
 
@@ -186,52 +186,47 @@ namespace JornaPay.ViewModels
             {
                 Placeholder = "Introduce tu contraseña",
                 IsPassword = true,
-                FontSize = 24,
+                FontSize = 19,
                 BackgroundColor = Colors.White,
-                WidthRequest = 300, // Reducir el ancho
+                WidthRequest = 230, 
                 HorizontalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center
             };
 
             var modalPage = new ContentPage
             {
+                BackgroundImageSource = "registrousuario.jpg",
+
                 Content = new VerticalStackLayout
                 {
-                    Padding = 20, 
-                    Spacing = 30, 
+                    Padding = 20,
+                    Spacing = 15,
                     HorizontalOptions = LayoutOptions.Center,
                     VerticalOptions = LayoutOptions.Center,
-                    WidthRequest = 350, // Reducir el ancho del contenedor
+                    WidthRequest = 350,
                     Children =
                     {
-                        new Label
-                        {
-                            Text = "Registro de Usuario",
-                            FontSize = 32,
-                            HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            TextColor = Colors.Black
-                        },
                         new Frame
                         {
                             BorderColor = Colors.Transparent,
                             HasShadow = false,
-                            BackgroundColor = Colors.Transparent,
-                            Padding = 5,
-                            HorizontalOptions = LayoutOptions.Center, 
-                            VerticalOptions = LayoutOptions.Center,
-                            WidthRequest = 320, // Reducir ancho del cuadro
+                            BackgroundColor = Colors.DodgerBlue,
+                            Padding = new Thickness(15, 5, 15, 5), // Ajusto el espaciado interno
+                            Margin = new Thickness(0, 150, 0, 0), // Desplazo hacia abajo el cuadro de la contraseña
+                            HorizontalOptions = LayoutOptions.Center,
+                            VerticalOptions = LayoutOptions.Start, // Evito que se expanda innecesariamente
+                            WidthRequest = 240,
                             Content = nombreEntry
                         },
                         new Frame
                         {
                             BorderColor = Colors.Transparent,
                             HasShadow = false,
-                            BackgroundColor = Colors.Transparent,
-                            Padding = 5,
+                            BackgroundColor = Colors.DodgerBlue,
+                            Padding = new Thickness(15, 5, 15, 5), // Ajusto el espaciado interno
                             HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Center,
-                            WidthRequest = 320, // Reducir ancho del cuadro
+                            VerticalOptions = LayoutOptions.Start, 
+                            WidthRequest = 240,
                             Content = contrasenyaEntry
                         },
                         new Button
@@ -239,8 +234,8 @@ namespace JornaPay.ViewModels
                             Text = "Confirmar",
                             BackgroundColor = Colors.Green,
                             TextColor = Colors.White,
-                            FontSize = 24, 
-                            WidthRequest = 200, 
+                            FontSize = 24,
+                            WidthRequest = 200,
                             HeightRequest = 60,
                             HorizontalOptions = LayoutOptions.Center,
                             VerticalOptions = LayoutOptions.Center,
@@ -276,11 +271,9 @@ namespace JornaPay.ViewModels
                     }
                 }
             };
-
             await Application.Current.MainPage.Navigation.PushModalAsync(modalPage);
             return await tcs.Task;
         }
-
 
         private async void CrearTrabajador()
         {
