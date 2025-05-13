@@ -3,24 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JornaPay.Pages.ImportesPagados"
              Title="Importes Pagados"
-             BackgroundColor="LightGreen">
+             BackgroundImageSource="importespagados.png">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="10" Spacing="20">
-            <Label Text="Importes Pagados"
-                   FontSize="Large"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="Black" />
+    <VerticalStackLayout Padding="10" Spacing="20" Margin="0,60,0,0">
 
-            <Label Text="{Binding ImporteTotalPagado, StringFormat='Total pagado: {0:C}'}"
+        <Label Text="{Binding ImporteTotalPagado, StringFormat='Total pagado: {0:C}'}"
                    FontSize="Large"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    TextColor="Green" />
             
             <!-- Buscador por nombre -->
-            <Entry Placeholder="Buscar por Nombre" Text="{Binding NombreBusqueda}" BackgroundColor="White" />
+            <Entry Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" BackgroundColor="Transparent" 
+                   FontAttributes="Bold" PlaceholderColor="DarkSeaGreen" FontSize="24"/>
             <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />
 
             <Button Text="Descargar Importes Pagados PDF" 
@@ -29,7 +24,7 @@
             TextColor="White"/>
 
             <!-- ListView filtrado con trabajadores pagados -->
-            <ListView ItemsSource="{Binding Trabajadores}">
+            <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="380">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -44,5 +39,4 @@
                 </ListView.ItemTemplate>
             </ListView>
         </VerticalStackLayout>
-    </ScrollView>
 </ContentPage>

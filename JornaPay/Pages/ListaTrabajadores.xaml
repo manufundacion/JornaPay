@@ -3,22 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JornaPay.Pages.ListaTrabajadores"
              Title="Lista de Trabajadores"
-             BackgroundColor="LightYellow">
+             BackgroundImageSource="listatrabajadores.png">
 
-    <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="20">
-
-            <Label Text="Lista de Trabajadores"
-                   FontSize="Large"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
 
             <!-- Mensaje de selección -->
             <Label Text="Por favor, seleccione un nombre en la lista para:"
                    FontSize="Medium"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   TextColor="Red" />
+                   TextColor="Red" 
+                   Padding="0,90,0,0"/>
 
             <!-- Botón para actualizar trabajador -->
             <Button Text="Actualizar Trabajador"
@@ -43,7 +38,8 @@
             <!-- ListView para mostrar los trabajadores -->
             <ListView ItemsSource="{Binding Trabajadores}"
                       SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"
-                      Margin="10">
+                      Margin="10"
+                      HeightRequest="320">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -55,7 +51,5 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-
         </VerticalStackLayout>
-    </ScrollView>
 </ContentPage>

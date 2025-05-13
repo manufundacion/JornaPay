@@ -147,7 +147,6 @@ namespace JornaPay.ViewModels
             var usuario = await _trabajadoresServicio.ValidarUsuarioAsync(NombreUsuario, Contraseña);
             if (usuario != null)
             {
-                await Application.Current.MainPage.DisplayAlert("Éxito", "Inicio de sesión correcto.", "OK");
                 Application.Current.MainPage = new AppShell();
             }
             else

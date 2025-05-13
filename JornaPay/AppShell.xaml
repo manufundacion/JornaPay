@@ -4,20 +4,20 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:local="clr-namespace:JornaPay.Pages"
        FlyoutBehavior="Flyout"
-       FlyoutBackground="LightGray"
-       BackgroundColor="LightYellow"
+       FlyoutBackground="LightSteelBlue"
+       BackgroundColor="LightBlue"
        Title="JornaPay - Gestión de Trabajadores">
 
     <!-- Cabecera del Flyout -->
     <Shell.FlyoutHeader>
-        <Frame BackgroundColor="LightGray" CornerRadius="5" Padding="10">
+        <Frame BackgroundColor="LightSteelBlue" CornerRadius="5" Padding="10">
             <VerticalStackLayout>
                 <Label Text="JornaPay - Gestión de Trabajadores"
                        TextColor="Black"
                        FontAttributes="Bold"
-                       FontSize="20"
+                       FontSize="19"
                        HorizontalOptions="Center" />
-                <Image Source="campo.png"
+                <Image Source="jornapay.png"
                        Aspect="AspectFill"
                        HeightRequest="100"
                        HorizontalOptions="Center" />

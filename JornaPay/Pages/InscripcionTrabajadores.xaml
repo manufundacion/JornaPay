@@ -2,26 +2,24 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JornaPay.Pages.InscripcionTrabajadores"
-             Title="Gestión de Trabajador"
-             BackgroundColor="LightYellow">
+             Title="Inscripción del Trabajador"
+             BackgroundImageSource="inscripcion.png">
 
     <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="20">
-            <Label Text="Gestión de Trabajador"
-                   FontSize="Large"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center" />
 
             <!-- Nombre -->
             <Label Text="Nombre"
                    FontSize="Medium"
                    FontAttributes="Bold"
-                   Margin="0,5,0,0" />
+                   Margin="0,95,0,0" />
             
             <Entry Placeholder="Introduzca un nombre"
+                   BackgroundColor="Transparent" 
+                   FontAttributes="Bold" 
+                   PlaceholderColor="White"
                    Text="{Binding Nombre}"
                    FontSize="Large"
-                   BackgroundColor="White" 
                    Margin="0,0,0,15" />
 
             <!-- Apellidos -->
@@ -32,7 +30,9 @@
             <Entry Placeholder="Introduzca 1 o 2 apellidos"
                    Text="{Binding Apellidos}"
                    FontSize="Large"
-                   BackgroundColor="White" 
+                   BackgroundColor="Transparent" 
+                   FontAttributes="Bold" 
+                   PlaceholderColor="White"
                    Margin="0,0,0,15" />
 
             <!-- Precio Por Hora -->
@@ -44,7 +44,9 @@
                 <Entry Placeholder="Introduzca el precio por hora"
                         Text="{Binding PrecioPorHora, Mode=TwoWay}"
                         FontSize="Large"
-                        BackgroundColor="White"
+                        BackgroundColor="Transparent" 
+                        FontAttributes="Bold" 
+                        PlaceholderColor="White"
                         Keyboard="Numeric"
                         HorizontalOptions="FillAndExpand" />
 

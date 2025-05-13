@@ -3,25 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JornaPay.Pages.ImportesImpagados"
              Title="Importes Impagados"
-             BackgroundColor="LightCoral">
+             BackgroundImageSource="importesimpagados.png">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="10" Spacing="20">
-            <Label Text="Importes Impagados"
-                   FontSize="Large"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="Black" />
-            
-            <Label Text="{Binding ImporteTotalImpagado, StringFormat='Total impagado: {0:C}'}"
+    <VerticalStackLayout Padding="10" Spacing="20" Margin="0,70,0,0">
+
+        <Label Text="{Binding ImporteTotalImpagado, StringFormat='Total impagado: {0:C}'}"
                    FontSize="Large"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    TextColor="Red" />
 
             <!-- Buscador por nombre -->
-            <Entry Placeholder="Buscar por Nombre" Text="{Binding NombreBusqueda}" BackgroundColor="White" />
-            <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />
+        <Entry Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" BackgroundColor="Transparent" 
+                   FontAttributes="Bold" PlaceholderColor="IndianRed" FontSize="24"/>
+        <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />
 
             <Button Text="Descargar Importes Impagados PDF" 
             Command="{Binding DescargarPdfCommand}" 
@@ -30,7 +25,7 @@
 
 
             <!-- ListView filtrado con trabajadores impagados -->
-            <ListView ItemsSource="{Binding Trabajadores}">
+        <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="380">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -45,5 +40,4 @@
                 </ListView.ItemTemplate>
             </ListView>
         </VerticalStackLayout>
-    </ScrollView>
 </ContentPage>
