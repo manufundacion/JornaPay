@@ -10,6 +10,7 @@ using JornaPay.Services;
 using iText.Layout;
 using iText.IO.Font.Constants;
 using JornaPay.Pages;
+using MauiImage = Microsoft.Maui.Controls.Image;
 
 namespace JornaPay.ViewModels
 {
@@ -347,88 +348,106 @@ namespace JornaPay.ViewModels
         private async Task<DateTime?> MostrarSelectorFechaEnDialogoAsync(DateTime fechaActual)
         {
             var tcs = new TaskCompletionSource<DateTime?>();
+
             DatePicker datePicker = new DatePicker
             {
-                Date = DateTime.Today, //La fecha inicial es la actual
-                MaximumDate = DateTime.Today, // No se pueden seleccionar fechas futuras
-                MinimumDate = new DateTime(2000, 1, 1), // Se pueden seleccionar fechas anteriores
+                Date = DateTime.Today,
+                MaximumDate = DateTime.Today,
+                MinimumDate = new DateTime(2000, 1, 1),
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 FontSize = 32,
-                WidthRequest = 250,
+                WidthRequest = 180,
                 HeightRequest = 60,
-                Margin = new Thickness(0, 20, 0, 60),
+                FontAttributes = FontAttributes.Bold,
+                Margin = new Thickness(20, 0), // Compensa visualmente el espacio
                 FlowDirection = FlowDirection.LeftToRight
             };
 
+
             var modalPage = new ContentPage
             {
-                Content = new VerticalStackLayout
+                Content = new Grid
                 {
-                    Padding = 40,
-                    Spacing = 50,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
                     Children =
-            {
-                new Label
-                {
-                    Text = "Selecciona una nueva fecha",
-                    FontSize = 36,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
-                    TextColor = Colors.Black
-                },
-                new Frame
-                {
-                    BorderColor = Colors.Transparent,
-                    HasShadow = false,
-                    BackgroundColor = Colors.Transparent,
-                    Padding = 5,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
-                    WidthRequest = 260,
-                    Content = datePicker
-                },
-                new Button
-                {
-                    Text = "Aceptar",
-                    BackgroundColor = Colors.Blue,
-                    TextColor = Colors.White,
-                    FontSize = 28,
-                    WidthRequest = 220,
-                    HeightRequest = 80,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
-                    Command = new Command(() =>
                     {
-                        tcs.SetResult(datePicker.Date);
-                        Application.Current.MainPage.Navigation.PopModalAsync();
-                    })
-                },
-                new Button
-                {
-                    Text = "Cancelar",
-                    BackgroundColor = Colors.Red,
-                    TextColor = Colors.White,
-                    FontSize = 28,
-                    WidthRequest = 220,
-                    HeightRequest = 80,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
-                    Command = new Command(() =>
-                    {
-                        tcs.SetResult(null);
-                        Application.Current.MainPage.Navigation.PopModalAsync();
-                    })
-                }
-            }
+                        new MauiImage
+                        {
+                            Source = "fechamodificar.png",
+                            Aspect = Aspect.AspectFill,
+                            Opacity = 0.16
+                        },
+                        new VerticalStackLayout
+                        {
+                            Spacing = 50,
+                            Padding = new Thickness(0, 60, 0, 0), // Mueve todo el contenido un poco hacia abajo
+                            HorizontalOptions = LayoutOptions.Center,
+                            VerticalOptions = LayoutOptions.Center,
+                            Children =
+                            {
+                                new Frame
+                                {
+                                    BorderColor = Colors.Transparent,
+                                    HasShadow = false,
+                                    BackgroundColor = Colors.Transparent,
+                                    HorizontalOptions = LayoutOptions.Center,
+                                    VerticalOptions = LayoutOptions.Center,
+                                    WidthRequest = 260,
+                                    Padding = new Thickness(0), // Elimina cualquier padding extra
+                                    Content = new Grid
+                                    {
+                                        VerticalOptions = LayoutOptions.Center,
+                                        HorizontalOptions = LayoutOptions.Center,
+                                        Children =
+                                        {
+                                            datePicker
+                                        }
+                                    }
+                                },
+                                // Botón Aceptar
+                                new Button
+                                {
+                                    Text = "Aceptar",
+                                    BackgroundColor = Colors.Blue,
+                                    TextColor = Colors.White,
+                                    FontSize = 28,
+                                    WidthRequest = 220,
+                                    HeightRequest = 80,
+                                    HorizontalOptions = LayoutOptions.Center,
+                                    VerticalOptions = LayoutOptions.Center,
+                                    Command = new Command(() =>
+                                    {
+                                        tcs.SetResult(datePicker.Date);
+                                        Application.Current.MainPage.Navigation.PopModalAsync();
+                                    })
+                                },
+                                // Botón Cancelar
+                                new Button
+                                {
+                                    Text = "Cancelar",
+                                    BackgroundColor = Colors.Red,
+                                    TextColor = Colors.White,
+                                    FontSize = 28,
+                                    WidthRequest = 220,
+                                    HeightRequest = 80,
+                                    HorizontalOptions = LayoutOptions.Center,
+                                    VerticalOptions = LayoutOptions.Center,
+                                    Command = new Command(() =>
+                                    {
+                                        tcs.SetResult(null);
+                                        Application.Current.MainPage.Navigation.PopModalAsync();
+                                    })
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
             await Application.Current.MainPage.Navigation.PushModalAsync(modalPage);
             return await tcs.Task;
         }
+
         private async Task GenerarYDescargarHistorialPdf()
         {
             try

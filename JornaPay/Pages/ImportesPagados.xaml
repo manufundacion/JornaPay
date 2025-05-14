@@ -8,35 +8,43 @@
     <Grid Padding="10" RowDefinitions="Auto, Auto, Auto, Auto, *" Margin="0,60,0,0">
         <!-- Total Pagado -->
         <Label Grid.Row="0" Text="{Binding ImporteTotalPagado, StringFormat='Total pagado: {0:C}'}"
-               FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center"
-               TextColor="ForestGreen" FontFamily="HelveticaNowText-Black" />
+           FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center"
+           TextColor="ForestGreen" FontFamily="HelveticaNowText-Black" />
 
         <!-- Buscador por nombre -->
         <Entry Grid.Row="1" Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" 
-               BackgroundColor="Transparent" FontAttributes="Bold" PlaceholderColor="DarkSeaGreen" 
-               FontSize="24" Margin="0,20,0,0"/>
+           BackgroundColor="Transparent" FontAttributes="Bold" PlaceholderColor="DarkSeaGreen" 
+           FontSize="24" Margin="0,20,0,0"/>
 
         <Button Grid.Row="2" Text="Buscar" Command="{Binding BuscarCommand}" 
-                BackgroundColor="Blue" TextColor="White" Margin="0,20,0,0"/>
+            BackgroundColor="Blue" TextColor="White" Margin="0,20,0,0"/>
 
         <!-- Botón para descargar PDF -->
         <Button Grid.Row="3" Text="Descargar Importes Pagados PDF" Command="{Binding DescargarPdfCommand}" 
-                BackgroundColor="Green" TextColor="White" Margin="0,20,0,20"/>
+            BackgroundColor="Green" TextColor="White" Margin="0,20,0,20"/>
 
-        <!-- ListView con desplazamiento habilitado -->
-        <ListView Grid.Row="4" ItemsSource="{Binding Trabajadores}" BackgroundColor="#e2fcd1"
+        <!-- ScrollView SOLO para el ListView -->
+        <ListView Grid.Row="4"
+          ItemsSource="{Binding Trabajadores}"
+          HasUnevenRows="True"
+          CachingStrategy="RecycleElement"
+          BackgroundColor="#e2fcd1"
           SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <HorizontalStackLayout  Padding="10">
-                            <Label Text="A " TextColor="Black"/>
-                            <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
-                            <Label Text="{Binding Apellidos}" TextColor="Black" Margin="5,0,0,0"/>
-                            <Label Text=" se le ha pagado un total de " />
-                            <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" TextColor="ForestGreen" 
-                           FontAttributes="Bold" FontFamily="HelveticaNowText-Black"/>
-                        </HorizontalStackLayout>
+                        <ScrollView Orientation="Horizontal">
+                            <HorizontalStackLayout Padding="10" Spacing="5">
+                                <Label Text="A" TextColor="Black" />
+                                <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="{Binding Apellidos}" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="se le ha pagado un total de" TextColor="Black"/>
+                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}"
+                               TextColor="ForestGreen"
+                               FontAttributes="Bold"
+                               FontFamily="HelveticaNowText-Black"/>
+                            </HorizontalStackLayout>
+                        </ScrollView>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

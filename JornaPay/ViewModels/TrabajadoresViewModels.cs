@@ -649,7 +649,7 @@ namespace JornaPay.ViewModels
                     }
                     catch (Exception uiEx)
                     {
-                        Console.WriteLine($"Error en actualización de UI: {uiEx.Message}");
+                        Console.WriteLine($"Error en actualización datos: {uiEx.Message}");
                     }
                 });
             }
