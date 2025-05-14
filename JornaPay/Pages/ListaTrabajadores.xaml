@@ -39,7 +39,8 @@
             <ListView ItemsSource="{Binding Trabajadores}"
                       SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"
                       Margin="10"
-                      HeightRequest="320">
+                      HeightRequest="320"
+                      BackgroundColor="#F8F1FF">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

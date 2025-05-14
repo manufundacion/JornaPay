@@ -11,7 +11,8 @@
                    FontSize="Large"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   TextColor="Red" />
+                   TextColor="Red" 
+                   FontFamily="HelveticaNowText-Black"/>
 
             <!-- Buscador por nombre -->
         <Entry Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" BackgroundColor="Transparent" 
@@ -25,7 +26,7 @@
 
 
             <!-- ListView filtrado con trabajadores impagados -->
-        <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="355">
+        <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="355" BackgroundColor="#fbe5ee">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -33,7 +34,8 @@
                                 <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold"/>
                                 <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold" Margin="5,0,0,0"/>
                                 <Label Text=" se le debe un total de  " />
-                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" TextColor="Black" FontAttributes="Bold"/>
+                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" TextColor="Red" 
+                                       FontAttributes="Bold" FontFamily="HelveticaNowText-Black"/>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
