@@ -5,41 +5,41 @@
              Title="Importes Impagados"
              BackgroundImageSource="importesimpagados.png">
 
-    <VerticalStackLayout Padding="10" Spacing="20" Margin="0,70,0,0">
+    <Grid Padding="10" RowDefinitions="Auto, Auto, Auto, Auto, *" Margin="0,70,0,0">
+        <!-- Total Impagado -->
+        <Label Grid.Row="0" Text="{Binding ImporteTotalImpagado, StringFormat='Total impagado: {0:C}'}"
+               FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center"
+               TextColor="Red" FontFamily="HelveticaNowText-Black"/>
 
-        <Label Text="{Binding ImporteTotalImpagado, StringFormat='Total impagado: {0:C}'}"
-                   FontSize="Large"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="Red" 
-                   FontFamily="HelveticaNowText-Black"/>
+        <!-- Buscador por nombre -->
+        <Entry Grid.Row="1" Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" 
+               BackgroundColor="Transparent" FontAttributes="Bold" PlaceholderColor="IndianRed" 
+               FontSize="24" Margin="0,20,0,0"/>
 
-            <!-- Buscador por nombre -->
-        <Entry Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" BackgroundColor="Transparent" 
-                   FontAttributes="Bold" PlaceholderColor="IndianRed" FontSize="24"/>
-        <Button Text="Buscar" Command="{Binding BuscarCommand}" BackgroundColor="Blue" TextColor="White" />
+        <Button Grid.Row="2" Text="Buscar" Command="{Binding BuscarCommand}" 
+                BackgroundColor="Blue" TextColor="White" Margin="0,20,0,0"/>
 
-            <Button Text="Descargar Importes Impagados PDF" 
-            Command="{Binding DescargarPdfCommand}" 
-            BackgroundColor="Green" 
-            TextColor="White"/>
+        <!-- Botón para descargar PDF -->
+        <Button Grid.Row="3" Text="Descargar Importes Impagados PDF" Command="{Binding DescargarPdfCommand}" 
+                BackgroundColor="DarkRed" TextColor="White" Margin="0,20,0,20"/>
 
-
-            <!-- ListView filtrado con trabajadores impagados -->
-        <ListView ItemsSource="{Binding Trabajadores}" HeightRequest="355" BackgroundColor="#fbe5ee">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <StackLayout Orientation="Horizontal" Padding="10">
-                                <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold"/>
-                                <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold" Margin="5,0,0,0"/>
-                                <Label Text=" se le debe un total de  " />
-                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" TextColor="Red" 
-                                       FontAttributes="Bold" FontFamily="HelveticaNowText-Black"/>
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </VerticalStackLayout>
+        <!-- ListView con desplazamiento habilitado -->
+        <ListView Grid.Row="4" ItemsSource="{Binding Trabajadores}" BackgroundColor="#fbe5ee"
+                  SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <HorizontalStackLayout Padding="10">
+                            <Label Text="A " TextColor="Black"/>
+                            <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold"/>
+                            <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold" Margin="5,0,0,0"/>
+                            <Label Text=" se le debe un total de " />
+                            <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" TextColor="Red" 
+                                   FontAttributes="Bold" FontFamily="HelveticaNowText-Black"/>
+                        </HorizontalStackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 </ContentPage>
