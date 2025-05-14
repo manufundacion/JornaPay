@@ -11,35 +11,35 @@
 
             <!-- Título del Trabajador -->
             <Label Text="{Binding Titulo}" 
-                   FontSize="Large" 
+                   FontSize="30" 
                    FontAttributes="Bold" 
                    HorizontalOptions="Center" 
                    TextColor="Black" />
 
             <!-- Precio por Hora -->
-            <Label Text="Precio por Hora:" FontAttributes="Bold" />
+            <Label Text="Precio por Hora:" FontAttributes="Bold" FontSize="Large" />
             <Entry Placeholder="Introduce el precio por hora"
                    Text="{Binding PrecioPorHora, StringFormat='{}{0:F2}'}" 
-                   Keyboard="Numeric" />
+                   Keyboard="Numeric" FontSize="Large"/>
 
             <!-- Entrada de Fecha -->
-            <Label Text="Fecha:" FontAttributes="Bold" />
+            <Label Text="Fecha:" FontAttributes="Bold" FontSize="Large"/>
             <DatePicker Date="{Binding FechaSeleccionada}" 
                         Format="dd/MM/yyyy"
                         MinimumDate="2000-01-01"
-                        MaximumDate="{x:Static System:DateTime.Today}" />
+                        MaximumDate="{x:Static System:DateTime.Today}" FontSize="Large"/>
 
             <!-- Entrada de Horas Trabajadas -->
-            <Label Text="Horas Trabajadas:" FontAttributes="Bold" />
+            <Label Text="Horas Trabajadas:" FontAttributes="Bold" FontSize="Large"/>
             <Entry Placeholder="Introduce las horas trabajadas"
                    Text="{Binding HorasTrabajadas}" 
-                   Keyboard="Numeric" />
+                   Keyboard="Numeric" FontSize="Large"/>
 
             <!-- Picker para Pagado -->
-            <Label Text="¿Pagado?" FontAttributes="Bold" />
+            <Label Text="¿Pagado?" FontAttributes="Bold" FontSize="Large"/>
             <Picker ItemsSource="{Binding PagadoOptions}" 
                     SelectedItem="{Binding Pagado}" 
-                    Title="Selecciona una opción" />
+                    Title="Selecciona una opción" FontSize="Large"/>
 
             <!-- Botón para Guardar Registro -->
             <Button Text="Guardar Registro"
@@ -71,7 +71,7 @@
 
             <!-- Historial del Trabajador -->
             <Label Text="Historial del Trabajador:" 
-                   FontSize="Medium" 
+                   FontSize="Large" 
                    FontAttributes="Bold" 
                    TextColor="Black" />
 
@@ -81,26 +81,30 @@
                        HorizontalOptions="Center" 
                        FontAttributes="Bold" 
                        TextColor="Black" 
-                       Margin="35,0,50,0" />
+                       Margin="35,0,33,0"
+                       FontSize="Medium"/>
 
                 <Label Text="Horas" 
                        HorizontalOptions="Center" 
                        FontAttributes="Bold" 
                        TextColor="Black" 
-                       Margin="0,0,25,0" />
+                       Margin="0,0,10,0"
+                       FontSize="Medium"/>
 
                 <Label Text="¿Pagado?" 
                        HorizontalOptions="Center" 
                        FontAttributes="Bold" 
                        TextColor="Black" 
-                       Margin="0,0,0,0" />
+                       Margin="0,0,0,0"
+                       FontSize="Medium"/>
 
                 <Label Text="Total" 
                        HorizontalOptions="Center" 
                        FontAttributes="Bold" 
                        TextColor="Black" 
                        WidthRequest="50" 
-                       Margin="25,0,0,0"/>
+                       Margin="15,0,0,0"
+                       FontSize="Medium"/>
             </HorizontalStackLayout>
 
             <!-- Lista de Historial -->
@@ -112,16 +116,16 @@
                             <HorizontalStackLayout Spacing="15" Padding="10">
                                 
                                 <Label Text="{Binding Fecha, StringFormat='{}{0:dd/MM/yyyy}'}" HorizontalOptions="Start" 
-                                       TextColor="Black" WidthRequest="100" />
+                                       TextColor="Black" WidthRequest="100" FontSize="Medium"/>
                                 
                                 <Label Text="{Binding HorasRealizadas}" HorizontalOptions="Start" VerticalOptions="Center" 
-                                       TextColor="Black" WidthRequest="80" Padding="15,0" />
+                                       TextColor="Black" WidthRequest="80" Padding="15,0" FontSize="Medium"/>
                                 
                                 <Label Text="{Binding EstadoPago}" HorizontalOptions="Start" 
-                                       TextColor="Black" WidthRequest="70" />
+                                       TextColor="Black" WidthRequest="70" FontSize="Medium"/>
                                 
                                 <Label Text="{Binding PrecioTotal}" HorizontalOptions="Start" 
-                                       TextColor="Black" WidthRequest="80" />
+                                       TextColor="Black" WidthRequest="80" FontSize="Medium"/>
                             </HorizontalStackLayout>
                         </ViewCell>
                     </DataTemplate>

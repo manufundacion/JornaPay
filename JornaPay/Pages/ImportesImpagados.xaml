@@ -34,15 +34,14 @@
                 <DataTemplate>
                     <ViewCell>
                         <ScrollView Orientation="Horizontal">
-                            <HorizontalStackLayout Padding="10" Spacing="5">
-                                <Label Text="A" TextColor="Black" />
-                                <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold" />
-                                <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold" Margin="5,0,0,0" />
-                                <Label Text="se le debe un total de" TextColor="Black" />
-                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}"
-                               TextColor="Red"
-                               FontAttributes="Bold"
-                               FontFamily="HelveticaNowText-Black"/>
+                            <HorizontalStackLayout Padding="10" >
+                                <Label Text="Debo " TextColor="Black" FontSize="18"/>
+                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" FontSize="18"
+                                       TextColor="Red" FontAttributes="Bold" FontFamily="HelveticaNowText-Black"/>
+                                <Label Text=" a " TextColor="Black" FontSize="18"/>
+                                <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold" FontSize="18" />
+                                <Label Text="{Binding Apellidos}" TextColor="Black" FontAttributes="Bold"
+                                       FontSize="18" Margin="5,0,0,0" />
                             </HorizontalStackLayout>
                         </ScrollView>
                     </ViewCell>

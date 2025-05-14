@@ -35,14 +35,11 @@
                     <ViewCell>
                         <ScrollView Orientation="Horizontal">
                             <HorizontalStackLayout Padding="10" Spacing="5">
-                                <Label Text="A" TextColor="Black" />
-                                <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
-                                <Label Text="{Binding Apellidos}" FontAttributes="Bold" TextColor="Black"/>
-                                <Label Text="se le ha pagado un total de" TextColor="Black"/>
-                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}"
-                               TextColor="ForestGreen"
-                               FontAttributes="Bold"
-                               FontFamily="HelveticaNowText-Black"/>
+                                <Label Text="{Binding Nombre}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="{Binding Apellidos}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="recibió" TextColor="Black" FontSize="18"/>
+                                <Label Text="{Binding ImporteTotal, StringFormat='{0:C}'}" FontSize="18" TextColor="ForestGreen" 
+                                       FontAttributes="Bold" FontFamily="HelveticaNowText-Black"/>
                             </HorizontalStackLayout>
                         </ScrollView>
                     </ViewCell>

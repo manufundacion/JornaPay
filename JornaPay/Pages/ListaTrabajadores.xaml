@@ -50,9 +50,9 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <HorizontalStackLayout Spacing="15" Padding="10">
-                            <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
-                            <Label Text="{Binding Apellidos}" TextColor="Black"/>
+                        <HorizontalStackLayout Spacing="5" Padding="10">
+                            <Label Text="{Binding Nombre}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                            <Label Text="{Binding Apellidos}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
                         </HorizontalStackLayout>
                     </ViewCell>
                 </DataTemplate>
