@@ -3,54 +3,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JornaPay.Pages.ListaTrabajadores"
              Title="Lista de Trabajadores"
-             BackgroundImageSource="listatrabajadores.png">
+             BackgroundImageSource="listatrabajadoresazul.png">
 
-        <VerticalStackLayout Padding="10" Spacing="20">
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, *" Padding="10">
 
-            <!-- Mensaje de selección -->
-            <Label Text="Por favor, seleccione un nombre en la lista para:"
-                   FontSize="Medium"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="Red" 
-                   Padding="0,90,0,0"/>
+        <!-- Mensaje -->
+        <Label Grid.Row="0"
+               Text="Por favor, seleccione un nombre en la lista para:"
+               FontSize="Medium"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               TextColor="Red"
+               Padding="0,90,0,0" />
 
-            <!-- Botón para actualizar trabajador -->
-            <Button Text="Actualizar Trabajador"
-                    Command="{Binding ActualizarTrabajadorCommand}"
-                    BackgroundColor="Blue"
-                    TextColor="White"
-                    IsEnabled="{Binding PuedeActualizar, Converter={StaticResource ObjectNotNullConverter}}" />
+        <!-- Botón Actualizar -->
+        <Button Grid.Row="1"
+                Text="Actualizar Trabajador"
+                Command="{Binding ActualizarTrabajadorCommand}"
+                BackgroundColor="Blue"
+                TextColor="White"
+                Margin="0,20,0,0"
+                IsEnabled="{Binding PuedeActualizar, Converter={StaticResource ObjectNotNullConverter}}" />
 
-            <!-- Botón para eliminar trabajador -->
-            <Button Text="Eliminar Trabajador"
-                    Command="{Binding EliminarTrabajadorCommand}"
-                    BackgroundColor="Red"
-                    TextColor="White"
-                    IsEnabled="{Binding PuedeEliminar, Converter={StaticResource ObjectNotNullConverter}}" />
+        <!-- Botón Eliminar -->
+        <Button Grid.Row="2"
+                Text="Eliminar Trabajador"
+                Command="{Binding EliminarTrabajadorCommand}"
+                BackgroundColor="Red"
+                TextColor="White"
+                Margin="0,20,0,0"
+                IsEnabled="{Binding PuedeEliminar, Converter={StaticResource ObjectNotNullConverter}}" />
 
-            <Button Text="Descargar lista PDF"
-                    BackgroundColor="Green"
-                    TextColor="White"
-                    Command="{Binding DescargarListaPdfCommand}"
-                    Margin="10"/>
+        <!-- Botón PDF -->
+        <Button Grid.Row="3"
+                Text="Descargar lista PDF"
+                BackgroundColor="Green"
+                TextColor="White"
+                Command="{Binding DescargarListaPdfCommand}"
+                Margin="0,20,0,20" />
 
-            <!-- ListView para mostrar los trabajadores -->
-            <ListView ItemsSource="{Binding Trabajadores}"
-                      SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"
-                      Margin="10"
-                      HeightRequest="320"
-                      BackgroundColor="#F8F1FF">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <HorizontalStackLayout Spacing="15" Padding="10">
-                                <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
-                                <Label Text="{Binding Apellidos}" TextColor="Black"/>
-                            </HorizontalStackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </VerticalStackLayout>
+        <!-- Lista de Trabajadores -->
+        <ListView Grid.Row="4"
+                  ItemsSource="{Binding Trabajadores}"
+                  SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"
+                  BackgroundColor="#d7dfe5">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <HorizontalStackLayout Spacing="15" Padding="10">
+                            <Label Text="{Binding Nombre}" FontAttributes="Bold" TextColor="Black"/>
+                            <Label Text="{Binding Apellidos}" TextColor="Black"/>
+                        </HorizontalStackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 </ContentPage>

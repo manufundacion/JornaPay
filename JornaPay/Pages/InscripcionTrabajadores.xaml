@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JornaPay.Pages.InscripcionTrabajadores"
              Title="Inscripción del Trabajador"
-             BackgroundImageSource="inscripcion.png">
+             BackgroundImageSource="inscripcionazul2.png">
 
     <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="20">
@@ -17,7 +17,7 @@
             <Entry Placeholder="Introduzca un nombre"
                    BackgroundColor="Transparent" 
                    FontAttributes="Bold" 
-                   PlaceholderColor="White"
+                   PlaceholderColor="#236192"
                    Text="{Binding Nombre}"
                    FontSize="Large"
                    Margin="0,0,0,15" />
@@ -32,7 +32,7 @@
                    FontSize="Large"
                    BackgroundColor="Transparent" 
                    FontAttributes="Bold" 
-                   PlaceholderColor="White"
+                   PlaceholderColor="#236192"
                    Margin="0,0,0,15" />
 
             <!-- Precio Por Hora -->

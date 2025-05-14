@@ -100,7 +100,7 @@ namespace JornaPay.ViewModels
                     OnPropertyChanged(nameof(TrabajadorSeleccionado)); //Notifico cambios
                     OnPropertyChanged(nameof(PuedeActualizar)); //Actualizo al trabjador seleccionado
                     OnPropertyChanged(nameof(PuedeEliminar));   //Elimino al trabjador seleccionado
-                    CargarHistorialTrabajadorAsync(); 
+                    CargarHistorialTrabajadorAsync();
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace JornaPay.ViewModels
                 Placeholder = "Introduce tu usuario",
                 FontSize = 19,
                 BackgroundColor = Colors.White,
-                WidthRequest = 230, 
+                WidthRequest = 230,
                 HorizontalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center
             };
@@ -188,7 +188,7 @@ namespace JornaPay.ViewModels
                 IsPassword = true,
                 FontSize = 19,
                 BackgroundColor = Colors.White,
-                WidthRequest = 230, 
+                WidthRequest = 230,
                 HorizontalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center
             };
@@ -225,7 +225,7 @@ namespace JornaPay.ViewModels
                             BackgroundColor = Colors.DodgerBlue,
                             Padding = new Thickness(15, 5, 15, 5), // Ajusto el espaciado interno
                             HorizontalOptions = LayoutOptions.Center,
-                            VerticalOptions = LayoutOptions.Start, 
+                            VerticalOptions = LayoutOptions.Start,
                             WidthRequest = 240,
                             Content = contrasenyaEntry
                         },
@@ -422,7 +422,11 @@ namespace JornaPay.ViewModels
         {
             if (TrabajadorSeleccionado == null) return;
 
-            bool confirmar = await Application.Current.MainPage.DisplayAlert("Confirmación", $"¿Seguro que desea actualizar la información de {TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}?", "Sí", "No");
+            bool confirmar = await Application.Current.MainPage.DisplayAlert(
+                "Confirmación",
+                $"¿Seguro que desea actualizar la información de {TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}?",
+                "Sí", "No");
+
             if (!confirmar) return;
 
             string nuevoNombre = await Application.Current.MainPage.DisplayPromptAsync(
@@ -433,6 +437,13 @@ namespace JornaPay.ViewModels
                 cancel: "Cancelar"
             );
 
+            // Si cancela o deja vacío el nombre, muestra mensaje de error y cancela todo
+            if (string.IsNullOrWhiteSpace(nuevoNombre))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se han ingresado datos nuevos.", "OK");
+                return;
+            }
+
             string nuevosApellidos = await Application.Current.MainPage.DisplayPromptAsync(
                 "Modificar Apellidos",
                 "Introduce los nuevos apellidos:",
@@ -441,21 +452,24 @@ namespace JornaPay.ViewModels
                 cancel: "Cancelar"
             );
 
-            if (string.IsNullOrWhiteSpace(nuevoNombre) || string.IsNullOrWhiteSpace(nuevosApellidos))
+            // Si cancela o deja vacío los apellidos, también se cancela el proceso
+            if (string.IsNullOrWhiteSpace(nuevosApellidos))
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "No se han ingresado datos nuevos.", "OK");
                 return;
             }
 
+            // Si ambos campos son válidos, se actualiza el trabajador
             TrabajadorSeleccionado.Nombre = nuevoNombre;
             TrabajadorSeleccionado.Apellidos = nuevosApellidos;
             await _trabajadoresServicio.ActualizarTrabajadorAsync(TrabajadorSeleccionado);
 
             await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador actualizado correctamente.", "OK");
+
             OnPropertyChanged(nameof(Trabajadores));
             OnPropertyChanged(nameof(TrabajadorSeleccionado));
 
-            await CargarTrabajadoresAsync(); //Recarga la lista de trabajadores
+            await CargarTrabajadoresAsync(); // Recargo la lista de trabajadores
         }
 
         private async Task EliminarTrabajador()
@@ -464,24 +478,25 @@ namespace JornaPay.ViewModels
 
             bool confirmar = await Application.Current.MainPage.DisplayAlert("Confirmación", $"¿Seguro que desea eliminar al trabajador {TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}?", "Sí", "No");
             if (!confirmar) return;
-                
+
             try
             {
                 await _trabajadoresServicio.EliminarTrabajadorAsync(TrabajadorSeleccionado.Id);
-                Trabajadores.Remove(TrabajadorSeleccionado);
 
-                //Busco y elimino la página del trabajador en Shell
-                var itemAEliminar = Shell.Current.Items.FirstOrDefault(item => item.Title == $"{TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}");
+                // Busco y elimino la página del trabajador en Shell
+                var itemAEliminar = Shell.Current.Items.FirstOrDefault(item =>
+                    item.Title == $"{TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}");
+
                 if (itemAEliminar != null)
                 {
-                    Shell.Current.Items.Remove(itemAEliminar); //Elimino la página del Shell
+                    Shell.Current.Items.Remove(itemAEliminar);
                 }
 
                 TrabajadorSeleccionado = null;
 
-                //Fuerzo la actualización de la lista
-                OnPropertyChanged(nameof(Trabajadores));
-                OnPropertyChanged(nameof(TrabajadorSeleccionado));
+                // Recarga la lista completa
+                await CargarTrabajadoresAsync();
+
                 ActualizarTotalPendiente();
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador eliminado correctamente.", "OK");
@@ -491,6 +506,7 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo eliminar el trabajador: {ex.Message}", "OK");
             }
         }
+
 
         private async Task CargarHistorialTrabajadorAsync()
         {
@@ -514,8 +530,6 @@ namespace JornaPay.ViewModels
             }
         }
 
-
-
         private void CalcularTotal()
         {
             decimal total = 0;
@@ -528,7 +542,7 @@ namespace JornaPay.ViewModels
             }
             TotalAPagar = $"Total a Pagar: {total:C}";
         }
-        
+
         private async void ActualizarDatos()
         {
             if (string.IsNullOrWhiteSpace(Nombre) || string.IsNullOrWhiteSpace(Apellidos))
@@ -598,7 +612,7 @@ namespace JornaPay.ViewModels
                             flyoutItem.Title != "Inscripción de Trabajadores" &&
                             flyoutItem.Title != "Lista de Trabajadores" &&
                             flyoutItem.Title != "Importes" &&
-                            flyoutItem.Title != "Cerrar Sesión" 
+                            flyoutItem.Title != "Cerrar Sesión"
                         ).ToList();
 
                         foreach (var item in itemsToRemove)

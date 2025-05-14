@@ -4,7 +4,7 @@
              xmlns:System="clr-namespace:System;assembly=netstandard"
              x:Class="JornaPay.Pages.NuevoTrabajador"
              Title="{Binding Titulo}"
-             BackgroundColor="LightBlue">
+             BackgroundColor="#E0EEF9">
 
     <ScrollView>
         <VerticalStackLayout Padding="15" Spacing="20">
