@@ -335,8 +335,18 @@ namespace JornaPay.ViewModels
                 Shell.Current.Items.Add(new FlyoutItem
                 {
                     Title = $"{Nombre} {Apellidos}",
-                    Items = { new ShellContent { Title = $"{Nombre} {Apellidos}", Content = nuevaPagina } }
+                    Icon = "trabajadoresicono.png", 
+                    Items =
+                    {
+                        new ShellContent
+                        {
+                            Title = $"{Nombre} {Apellidos}",
+                            Content = nuevaPagina,
+                            Icon = "trabajadoresicono.png"
+                        }
+                    }
                 });
+
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", $"El trabajador {Nombre} {Apellidos} se añadió al menú.", "OK");
 

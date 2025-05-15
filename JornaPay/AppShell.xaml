@@ -26,24 +26,24 @@
     </Shell.FlyoutHeader>
 
     <!-- Menú lateral -->
-    <FlyoutItem Title="Inscripción de Trabajadores" Icon="trabajadores.png">
+    <FlyoutItem Title="Inscripción de Trabajadores" Icon="inscripcionicono.png">
         <ShellContent Title="Inscribir" Route="InscripcionTrabajadores" ContentTemplate="{DataTemplate local:InscripcionTrabajadores}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Lista de Trabajadores" Icon="trabajadoresLista.png">
+    <FlyoutItem Title="Lista de Trabajadores" Icon="listatrabajadoresicono.png">
         <ShellContent Title="Lista" Route="ListaTrabajadores" ContentTemplate="{DataTemplate local:ListaTrabajadores}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Importes">
-        <ShellContent Title="Importes Pagados" Icon="importespagadosicono.svg" Route="ImportesPagados" ContentTemplate="{DataTemplate local:ImportesPagados}" />
-        <ShellContent Title="Importes Impagados" Icon="importesimpagadosicono.svg" Route="ImportesImpagados" ContentTemplate="{DataTemplate local:ImportesImpagados}" />
+    <FlyoutItem Title="Importes" Icon="importesicono.png">
+        <ShellContent Title="Importes Pagados" Icon="importespagadosicono.png" Route="ImportesPagados" ContentTemplate="{DataTemplate local:ImportesPagados}" />
+        <ShellContent Title="Importes Impagados" Icon="importesimpagadosicono.png" Route="ImportesImpagados" ContentTemplate="{DataTemplate local:ImportesImpagados}" />
     </FlyoutItem>
 
     <!-- Cerrar sesión -->
-    <FlyoutItem Title="Cerrar Sesión" Icon="logout.png" IsVisible="True">
+    <FlyoutItem Title="Cerrar Sesión" Icon="cerrarsesionicono.png" IsVisible="True">
         <ShellContent Title="Cerrar Sesión" ContentTemplate="{DataTemplate local:CerrarSesion}" />
     </FlyoutItem>
 
     <!-- Ruta para NuevoTrabajador -->
-    <ShellContent Route="NuevoTrabajador" ContentTemplate="{DataTemplate local:NuevoTrabajador}" IsVisible="False" />
+    <ShellContent Route="NuevoTrabajador" Icon="trabajadoresicono.png" ContentTemplate="{DataTemplate local:NuevoTrabajador}" IsVisible="False" />
 </Shell>

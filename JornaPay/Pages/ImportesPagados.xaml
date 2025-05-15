@@ -13,7 +13,7 @@
 
         <!-- Buscador por nombre -->
         <Entry Grid.Row="1" Placeholder="Introduzca nombre y apellidos" Text="{Binding NombreBusqueda}" 
-           BackgroundColor="Transparent" FontAttributes="Bold" PlaceholderColor="DarkSeaGreen" 
+           BackgroundColor="Transparent" FontAttributes="Bold" PlaceholderColor="MediumSeaGreen" 
            FontSize="24" Margin="0,20,0,0"/>
 
         <Button Grid.Row="2" Text="Buscar" Command="{Binding BuscarCommand}" 
