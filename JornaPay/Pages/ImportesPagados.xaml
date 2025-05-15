@@ -8,7 +8,7 @@
     <Grid Padding="10" RowDefinitions="Auto, Auto, Auto, Auto, *" Margin="0,60,0,0">
         <!-- Total Pagado -->
         <Label Grid.Row="0" Text="{Binding ImporteTotalPagado, StringFormat='Total pagado: {0:C}'}"
-           FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center"
+           FontSize="25" FontAttributes="Bold" HorizontalOptions="Center"
            TextColor="ForestGreen" FontFamily="HelveticaNowText-Black" />
 
         <!-- Buscador por nombre -->

@@ -34,9 +34,9 @@
         <ShellContent Title="Lista" Route="ListaTrabajadores" ContentTemplate="{DataTemplate local:ListaTrabajadores}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Importes" Icon="trabajadores.png">
-        <ShellContent Title="Importes Pagados" Route="ImportesPagados" ContentTemplate="{DataTemplate local:ImportesPagados}" />
-        <ShellContent Title="Importes Impagados" Route="ImportesImpagados" ContentTemplate="{DataTemplate local:ImportesImpagados}" />
+    <FlyoutItem Title="Importes">
+        <ShellContent Title="Importes Pagados" Icon="importespagadosicono.svg" Route="ImportesPagados" ContentTemplate="{DataTemplate local:ImportesPagados}" />
+        <ShellContent Title="Importes Impagados" Icon="importesimpagadosicono.svg" Route="ImportesImpagados" ContentTemplate="{DataTemplate local:ImportesImpagados}" />
     </FlyoutItem>
 
     <!-- Cerrar sesión -->

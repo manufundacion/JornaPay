@@ -8,7 +8,7 @@
     <Grid Padding="10" RowDefinitions="Auto, Auto, Auto, Auto, *" Margin="0,70,0,0">
         <!-- Total Impagado -->
         <Label Grid.Row="0" Text="{Binding ImporteTotalImpagado, StringFormat='Total impagado: {0:C}'}"
-               FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center"
+               FontSize="25" FontAttributes="Bold" HorizontalOptions="Center"
                TextColor="Red" FontFamily="HelveticaNowText-Black"/>
 
         <!-- Buscador por nombre -->
