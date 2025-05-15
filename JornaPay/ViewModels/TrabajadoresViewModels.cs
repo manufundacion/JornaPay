@@ -175,7 +175,7 @@ namespace JornaPay.ViewModels
             Entry nombreEntry = new Entry
             {
                 Placeholder = "Introduce tu usuario",
-                FontSize = 19,
+                FontSize = 21,
                 BackgroundColor = Colors.White,
                 WidthRequest = 230,
                 HorizontalOptions = LayoutOptions.Center,
@@ -186,7 +186,7 @@ namespace JornaPay.ViewModels
             {
                 Placeholder = "Introduce tu contraseña",
                 IsPassword = true,
-                FontSize = 19,
+                FontSize = 21,
                 BackgroundColor = Colors.White,
                 WidthRequest = 230,
                 HorizontalOptions = LayoutOptions.Center,
