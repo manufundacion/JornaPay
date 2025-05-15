@@ -47,16 +47,15 @@
           SelectedItem="{Binding TrabajadorSeleccionado, Mode=TwoWay}"
           BackgroundColor="#d7dfe5"
           HasUnevenRows="True"
-          CachingStrategy="RecycleElement">
+          CachingStrategy="RecycleElement"
+          SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <ScrollView Orientation="Horizontal">
-                            <HorizontalStackLayout Spacing="10" Padding="10">
-                                <Label Text="{Binding Nombre}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
-                                <Label Text="{Binding Apellidos}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
-                            </HorizontalStackLayout>
-                        </ScrollView>
+                        <HorizontalStackLayout Spacing="10" Padding="10">
+                            <Label Text="{Binding Nombre}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                            <Label Text="{Binding Apellidos}" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                        </HorizontalStackLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -606,7 +606,6 @@ namespace JornaPay.ViewModels
                 {
                     try
                     {
-                        // 🔹 **Mantener opción "Cerrar Sesión"**
                         if (!Shell.Current.Items.Any(item => item.Title == "Cerrar Sesión"))
                         {
                             Shell.Current.Items.Add(new FlyoutItem
@@ -631,6 +630,7 @@ namespace JornaPay.ViewModels
                         }
 
                         //Añado los trabajadores al menú
+                        // Añado los trabajadores al menú
                         foreach (var trabajador in trabajadores)
                         {
                             Trabajadores.Add(trabajador);
@@ -641,16 +641,17 @@ namespace JornaPay.ViewModels
                                 var nuevoFlyoutItem = new FlyoutItem
                                 {
                                     Title = $"{trabajador.Nombre} {trabajador.Apellidos}",
+                                    Icon = "trabajadoresicono.png",
                                     Items =
-                            {
-                                new ShellContent
-                                {
-                                    Title = $"{trabajador.Nombre} {trabajador.Apellidos}",
-                                    ContentTemplate = new DataTemplate(() => new NuevoTrabajador(trabajador.Nombre, trabajador.Apellidos, trabajador.PrecioPorHora))
-                                }
-                            }
+                                    {
+                                        new ShellContent
+                                        {
+                                            Title = $"{trabajador.Nombre} {trabajador.Apellidos}",
+                                            Icon = "trabajadoresicono.png",
+                                            ContentTemplate = new DataTemplate(() => new NuevoTrabajador(trabajador.Nombre, trabajador.Apellidos, trabajador.PrecioPorHora))
+                                        }
+                                    }
                                 };
-
                                 Shell.Current.Items.Add(nuevoFlyoutItem);
                             }
                         }

@@ -23,7 +23,7 @@
         <Button Grid.Row="3" Text="Descargar Importes Impagados PDF" Command="{Binding DescargarPdfCommand}" 
                 BackgroundColor="DarkRed" TextColor="White" Margin="0,20,0,20"/>
 
-        <!-- ListView con desplazamiento habilitado -->
+        <!-- Lista de trabajadores de trabajadores impagados -->
         <ListView Grid.Row="4"
           ItemsSource="{Binding Trabajadores}"
           HasUnevenRows="True"

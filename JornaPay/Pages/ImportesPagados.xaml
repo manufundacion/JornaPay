@@ -23,7 +23,7 @@
         <Button Grid.Row="3" Text="Descargar Importes Pagados PDF" Command="{Binding DescargarPdfCommand}" 
             BackgroundColor="Green" TextColor="White" Margin="0,20,0,20"/>
 
-        <!-- ScrollView SOLO para el ListView -->
+        <!-- Lista de trabajadores de trabajadores pagados -->
         <ListView Grid.Row="4"
           ItemsSource="{Binding Trabajadores}"
           HasUnevenRows="True"
