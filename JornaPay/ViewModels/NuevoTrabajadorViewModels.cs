@@ -305,9 +305,6 @@ namespace JornaPay.ViewModels
         {
             try
             {
-                // Limpio la colección del ObservableCollection
-                Historial.Clear();
-
                 var trabajador = await _trabajadoresServicio.ObtenerTrabajadorAsync(Nombre, Apellidos);
 
                 if (trabajador == null || trabajador.NombreUsuario != SesionUsuario.NombreUsuarioActual)
@@ -318,26 +315,25 @@ namespace JornaPay.ViewModels
 
                 var historialTrabajador = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
 
-                // Guardo la copia completa para el nuevo filtrado
-                _historialCompleto = historialTrabajador.ToList();
-
-                if (_historialCompleto.Count == 0)
+                if (historialTrabajador == null || historialTrabajador.Count == 0)
                 {
                     await Application.Current.MainPage.DisplayAlert("Aviso", "No se encontraron registros de historial en la base de datos.", "OK");
+                    return;
                 }
-                else
+
+                _historialCompleto = historialTrabajador.ToList(); // Copia completa para filtrado
+
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        foreach (var registro in _historialCompleto)
-                        {
-                            Historial.Add(registro);
-                        }
-                        OnPropertyChanged(nameof(Historial)); // Actualizo el historial del trabajdor
-                        FiltrarHistorial(); // Aplico el filtrado usando la copia completa para que me cargue la fecha correcta
-                        ActualizarTotalPendiente();
-                    });
-                }
+                    var historialTemporal = new ObservableCollection<TrabajadorDatos>(_historialCompleto);
+
+                    // Evitamos limpiar directamente `Historial` para evitar problemas de actualización
+                    Historial = historialTemporal;
+
+                    OnPropertyChanged(nameof(Historial));
+                    FiltrarHistorial();
+                    ActualizarTotalPendiente();
+                });
             }
             catch (Exception ex)
             {
@@ -345,6 +341,7 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo cargar el historial: {ex.Message}", "OK");
             }
         }
+
 
         private void ActualizarTotalPendiente()
         {
@@ -391,9 +388,7 @@ namespace JornaPay.ViewModels
 
             await _trabajadoresServicio.GuardarHistorialAsync(nuevoHistorial);
 
-            // Obtengo el registro con el ID asignado por la base de datos
             var historialGuardado = await _trabajadoresServicio.ObtenerRegistroAsync(nuevoHistorial.Id);
-
             if (historialGuardado == null || historialGuardado.Id == 0)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "No se asignó correctamente el ID al historial.", "OK");
@@ -409,15 +404,14 @@ namespace JornaPay.ViewModels
 
             await Application.Current.MainPage.DisplayAlert("Éxito", "Datos insertados correctamente.", "OK");
 
-            // Recargo el historial para reflejar los cambios
+            // ✅ Llama directamente a `CargarHistorialAsync()`
             await CargarHistorialAsync();
-
-            // Vuelvo a filtrar la lista según el mes y año seleccionados
-            FiltrarHistorial();
-
-            // Notifico que Historial ha sido actualizado.
             OnPropertyChanged(nameof(Historial));
+
+            // 🔹 Recargar la página manualmente solo si es necesario
+            await Application.Current.MainPage.Navigation.PushAsync(new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora));
         }
+
 
         // Filtro el historial por mes y año seleccionado
         private void FiltrarHistorial()

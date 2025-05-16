@@ -15,6 +15,17 @@ public partial class ListaTrabajadores : ContentPage
             MostrarErrorAsync(ex.Message);
         }
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is TrabajadoresViewModels viewModel)
+        {
+            await viewModel.CargarTrabajadoresAsync();
+        }
+    }
+
     private async Task MostrarErrorAsync(string mensaje)
     {
         await Application.Current.MainPage.DisplayAlert("Error", $"Ocurrió un problema: {mensaje}", "OK");
