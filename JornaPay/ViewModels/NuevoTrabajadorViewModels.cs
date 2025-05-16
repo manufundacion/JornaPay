@@ -26,6 +26,13 @@ namespace JornaPay.ViewModels
         private DateTime _fechaSeleccionada = DateTime.Today;
         private TrabajadorDatos _elementoSeleccionado;
 
+        // Variables para los filtros
+        private string _mesSeleccionado;
+        private string _añoSeleccionado;
+        private Trabajador _trabajadorSeleccionado;
+        private List<TrabajadorDatos> _historialCompleto = new();
+
+
         public string Nombre
         {
             get => _nombre;
@@ -120,6 +127,38 @@ namespace JornaPay.ViewModels
             get => Historial.Where(h => !h.Pagado).Sum(h => h.PrecioTotal); //Suma solo los registros no pagados
         }
 
+        public string MesSeleccionado
+        {
+            get => _mesSeleccionado;
+            set
+            {
+                _mesSeleccionado = value;
+                OnPropertyChanged();
+                FiltrarHistorial();
+            }
+        }
+
+        public string AñoSeleccionado
+        {
+            get => _añoSeleccionado;
+            set
+            {
+                _añoSeleccionado = value;
+                OnPropertyChanged();
+                FiltrarHistorial();
+            }
+        }
+
+        public Trabajador TrabajadorSeleccionado
+        {
+            get => _trabajadorSeleccionado;
+            set
+            {
+                _trabajadorSeleccionado = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public DateTime MinimumDate => DateTime.Today.AddYears(-1);
         public DateTime MaximumDate => DateTime.Today.AddYears(1);
@@ -127,6 +166,19 @@ namespace JornaPay.ViewModels
         public ObservableCollection<string> PagadoOptions { get; set; } = new ObservableCollection<string> { "Sí", "No" };
 
         public ObservableCollection<TrabajadorDatos> Historial { get; set; } = new();
+
+        // Listas de Meses
+        public ObservableCollection<string> Meses { get; set; } = new ObservableCollection<string>
+        {
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto",
+            "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        };
+
+        //Lista de Años
+        public ObservableCollection<string> Años { get; set; }
+
+        // Lista del historial filtrado
+        public ObservableCollection<TrabajadorDatos> HistorialFiltrado { get; set; } = new();
 
         public ICommand GuardarRegistroCommand { get; }
 
@@ -221,7 +273,6 @@ namespace JornaPay.ViewModels
 
 
 
-
         public NuevoTrabajadorViewModels(string nombre, string apellidos, decimal precioPorHora)
         {
             _trabajadoresServicio = TrabajadoresServicio.GetInstance();
@@ -230,8 +281,20 @@ namespace JornaPay.ViewModels
             PrecioPorHora = precioPorHora;
             GuardarRegistroCommand = new Command(GuardarRegistro);
             DescargarHistorialPdfCommand = new Command(async () => await GenerarYDescargarHistorialPdf());
-        }
 
+            // Genero la lista de Años dinámicamente (últimos 6 años, incluyendo el actual)
+            Años = new ObservableCollection<string>();
+            int currentYear = DateTime.Now.Year;
+            for (int i = currentYear - 5; i <= currentYear; i++)
+            {
+                Años.Add(i.ToString());
+            }
+
+            // Establezco el mes y año actual como selección por defecto
+            var fechaActual = DateTime.Now;
+            MesSeleccionado = Meses[fechaActual.Month - 1];
+            AñoSeleccionado = fechaActual.Year.ToString();
+        }
 
         public void CargarHistorialAlAbrir()
         {
@@ -242,6 +305,7 @@ namespace JornaPay.ViewModels
         {
             try
             {
+                // Limpio la colección del ObservableCollection
                 Historial.Clear();
 
                 var trabajador = await _trabajadoresServicio.ObtenerTrabajadorAsync(Nombre, Apellidos);
@@ -254,7 +318,10 @@ namespace JornaPay.ViewModels
 
                 var historialTrabajador = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
 
-                if (historialTrabajador.Count == 0)
+                // Guardo la copia completa para el nuevo filtrado
+                _historialCompleto = historialTrabajador.ToList();
+
+                if (_historialCompleto.Count == 0)
                 {
                     await Application.Current.MainPage.DisplayAlert("Aviso", "No se encontraron registros de historial en la base de datos.", "OK");
                 }
@@ -262,11 +329,12 @@ namespace JornaPay.ViewModels
                 {
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        foreach (var registro in historialTrabajador)
+                        foreach (var registro in _historialCompleto)
                         {
                             Historial.Add(registro);
                         }
-                        OnPropertyChanged(nameof(Historial)); //Actualizo el historial
+                        OnPropertyChanged(nameof(Historial)); // Actualizo el historial del trabajdor
+                        FiltrarHistorial(); // Aplico el filtrado usando la copia completa para que me cargue la fecha correcta
                         ActualizarTotalPendiente();
                     });
                 }
@@ -340,10 +408,46 @@ namespace JornaPay.ViewModels
             Historial.Add(historialGuardado);
 
             await Application.Current.MainPage.DisplayAlert("Éxito", "Datos insertados correctamente.", "OK");
+
             // Recargo el historial para reflejar los cambios
             await CargarHistorialAsync();
+
+            // Vuelvo a filtrar la lista según el mes y año seleccionados
+            FiltrarHistorial();
+
+            // Notifico que Historial ha sido actualizado.
             OnPropertyChanged(nameof(Historial));
         }
+
+        // Filtro el historial por mes y año seleccionado
+        private void FiltrarHistorial()
+        {
+            if (string.IsNullOrEmpty(MesSeleccionado) || string.IsNullOrEmpty(AñoSeleccionado))
+                return;
+
+            int mesNumero = Meses.IndexOf(MesSeleccionado) + 1;
+            int añoNumero = int.Parse(AñoSeleccionado);
+
+            Console.WriteLine($"Filtrando: Mes {MesSeleccionado} ({mesNumero}), Año {AñoSeleccionado}");
+
+            // Aplicar el filtro sobre la lista completa (o, si usas respaldo, sobre la copia completa)
+            var registrosFiltrados = _historialCompleto.Where(h => h.Fecha.Month == mesNumero && h.Fecha.Year == añoNumero).ToList();
+
+            Console.WriteLine($"Registros encontrados tras el filtro: {registrosFiltrados.Count}");
+
+            Historial.Clear();
+            foreach (var registro in registrosFiltrados)
+            {
+                Historial.Add(registro);
+            }
+
+            // Notificolos cambios
+            OnPropertyChanged(nameof(Historial));
+
+            // Actualizo la propiedad TotalPendientePago para que se recalcule
+            OnPropertyChanged(nameof(TotalPendientePago));
+        }
+
 
         private async Task<DateTime?> MostrarSelectorFechaEnDialogoAsync(DateTime fechaActual)
         {

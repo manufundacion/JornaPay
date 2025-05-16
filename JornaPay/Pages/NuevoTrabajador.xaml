@@ -67,13 +67,26 @@
              IsEnabled="{Binding Historial.Count, Mode=OneWay}"
              Padding="10,5" />
 
-
-
             <!-- Historial del Trabajador -->
             <Label Text="Historial del Trabajador:" 
                    FontSize="Large" 
                    FontAttributes="Bold" 
                    TextColor="Black" />
+
+            <!-- Contenedor de filtros -->
+            <HorizontalStackLayout Padding="5" Spacing="20">
+
+                <!-- Filtro por Mes -->
+                <Label Text="Mes:" FontAttributes="Bold" FontSize="Medium" TextColor="Black" Margin="0,15,0,0"/>
+                <Picker ItemsSource="{Binding Meses}" SelectedItem="{Binding MesSeleccionado}" FontAttributes="Bold"
+                        FontSize="Medium"/>
+
+                <!-- Filtro por Año -->
+                <Label Text="Año:" FontAttributes="Bold" FontSize="Medium" TextColor="Black" Margin="0,15,0,0"/>
+                <Picker ItemsSource="{Binding Años}" SelectedItem="{Binding AñoSeleccionado}" FontAttributes="Bold"
+                        FontSize="Medium"/>
+
+            </HorizontalStackLayout>
 
             <!-- Encabezado de Historial -->
             <HorizontalStackLayout Spacing="10" Padding="5">
