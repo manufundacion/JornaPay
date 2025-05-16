@@ -218,15 +218,17 @@ namespace JornaPay.ViewModels
 
                 await _trabajadoresServicio.ActualizarHistorialAsync(registroBD);
 
+                await Application.Current.MainPage.DisplayAlert("Éxito", "Datos actualizados con éxito", "OK");
+
                 // Envía el mensaje para que la página recargue
                 MessagingCenter.Send(this, "RecargarHistorial");
+
 
                 ElementoSeleccionado = null;
 
                 // Recargo la lista
                 await CargarHistorialAsync();
 
-                await Application.Current.MainPage.DisplayAlert("Éxito", "Datos actualizados con éxito", "OK");
             }
         });
 
@@ -329,7 +331,6 @@ namespace JornaPay.ViewModels
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en CargarHistorialAsync: {ex.Message}");
-                await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo cargar el historial: {ex.Message}", "OK");
             }
         }
 
