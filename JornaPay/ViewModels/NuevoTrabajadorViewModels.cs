@@ -187,61 +187,48 @@ namespace JornaPay.ViewModels
             if (ElementoSeleccionado != null)
             {
                 var registroBD = await _trabajadoresServicio.ObtenerRegistroAsync(ElementoSeleccionado.Id);
-
                 if (registroBD == null)
                 {
                     await Application.Current.MainPage.DisplayAlert("Error", "El registro no existe en la base de datos.", "OK");
                     return;
                 }
 
-                // Muestro el diálogo con el DatePicker primero
                 DateTime? nuevaFecha = await MostrarSelectorFechaEnDialogoAsync(registroBD.Fecha);
-                if (!nuevaFecha.HasValue) return; //Si el usuario cancela, no hago cambios
+                if (!nuevaFecha.HasValue) return;
 
-                // Pido las nuevas horas trabajadas
                 string nuevasHoras = await Application.Current.MainPage.DisplayPromptAsync(
                     "Modificar Horas", "Introduce las nuevas horas trabajadas",
                     initialValue: registroBD.HorasRealizadas.ToString(), accept: "Aceptar", cancel: "Cancelar");
                 if (string.IsNullOrEmpty(nuevasHoras)) return;
 
-                // Pido el nuevo precio por hora
                 string nuevoPrecioPorHora = await Application.Current.MainPage.DisplayPromptAsync(
                     "Modificar Precio por Hora", "Introduce el nuevo precio por hora (€)",
                     initialValue: registroBD.PrecioPorHora.ToString(), accept: "Aceptar", cancel: "Cancelar");
                 if (string.IsNullOrEmpty(nuevoPrecioPorHora)) return;
 
-                // Pregunto si el registro está pagado
                 string nuevoEstadoPago = await Application.Current.MainPage.DisplayActionSheet(
                     "¿Pagado?", "Cancelar", null, "Sí", "No");
                 if (nuevoEstadoPago == "Cancelar") return;
 
-                // Aplico los cambios solo si el usuario ha confirmado cada entrada
                 registroBD.Fecha = nuevaFecha.Value;
                 registroBD.HorasRealizadas = decimal.Parse(nuevasHoras);
                 registroBD.PrecioPorHora = decimal.Parse(nuevoPrecioPorHora);
                 registroBD.Pagado = nuevoEstadoPago == "Sí";
-
-                // Recalculo el PrecioTotal con el nuevo PrecioPorHora
                 registroBD.PrecioTotal = registroBD.HorasRealizadas * registroBD.PrecioPorHora;
 
-                // Guardo los cambios en la base de datos
                 await _trabajadoresServicio.ActualizarHistorialAsync(registroBD);
 
-                // Limpio la selección para desactivar los botones
+                // Envía el mensaje para que la página recargue
+                MessagingCenter.Send(this, "RecargarHistorial");
+
                 ElementoSeleccionado = null;
-                OnPropertyChanged(nameof(ElementoSeleccionado));
 
-                // Recargo el historial para reflejar los cambios
+                // Recargo la lista
                 await CargarHistorialAsync();
-                OnPropertyChanged(nameof(Historial));
 
-                await Application.Current.MainPage.DisplayAlert("Éxito", $"Datos actualizados con éxito", "OK");
-
-                //Recargo la página manualmente para forzar la actualizacion de los datos
-                await Application.Current.MainPage.Navigation.PushAsync(new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora));
+                await Application.Current.MainPage.DisplayAlert("Éxito", "Datos actualizados con éxito", "OK");
             }
         });
-
 
         public ICommand EliminarRegistroCommand => new Command(async () =>
         {
@@ -305,6 +292,9 @@ namespace JornaPay.ViewModels
         {
             try
             {
+                // Limpio la colección del ObservableCollection
+                Historial.Clear();
+
                 var trabajador = await _trabajadoresServicio.ObtenerTrabajadorAsync(Nombre, Apellidos);
 
                 if (trabajador == null || trabajador.NombreUsuario != SesionUsuario.NombreUsuarioActual)
@@ -315,25 +305,26 @@ namespace JornaPay.ViewModels
 
                 var historialTrabajador = await _trabajadoresServicio.ObtenerHistorialPorTrabajadorAsync(trabajador.Id);
 
-                if (historialTrabajador == null || historialTrabajador.Count == 0)
+                // Guardo la copia completa para el nuevo filtrado
+                _historialCompleto = historialTrabajador.ToList();
+
+                if (_historialCompleto.Count == 0)
                 {
                     await Application.Current.MainPage.DisplayAlert("Aviso", "No se encontraron registros de historial en la base de datos.", "OK");
-                    return;
                 }
-
-                _historialCompleto = historialTrabajador.ToList(); // Copia completa para filtrado
-
-                Device.BeginInvokeOnMainThread(() =>
+                else
                 {
-                    var historialTemporal = new ObservableCollection<TrabajadorDatos>(_historialCompleto);
-
-                    // Evitamos limpiar directamente `Historial` para evitar problemas de actualización
-                    Historial = historialTemporal;
-
-                    OnPropertyChanged(nameof(Historial));
-                    FiltrarHistorial();
-                    ActualizarTotalPendiente();
-                });
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        foreach (var registro in _historialCompleto)
+                        {
+                            Historial.Add(registro);
+                        }
+                        OnPropertyChanged(nameof(Historial)); // Actualizo el historial del trabajdor
+                        FiltrarHistorial(); // Aplico el filtrado usando la copia completa para que me cargue la fecha correcta
+                        ActualizarTotalPendiente();
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -341,7 +332,6 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo cargar el historial: {ex.Message}", "OK");
             }
         }
-
 
         private void ActualizarTotalPendiente()
         {
@@ -388,7 +378,9 @@ namespace JornaPay.ViewModels
 
             await _trabajadoresServicio.GuardarHistorialAsync(nuevoHistorial);
 
+            // Obtengo el registro con el ID asignado por la base de datos
             var historialGuardado = await _trabajadoresServicio.ObtenerRegistroAsync(nuevoHistorial.Id);
+
             if (historialGuardado == null || historialGuardado.Id == 0)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "No se asignó correctamente el ID al historial.", "OK");
@@ -404,14 +396,15 @@ namespace JornaPay.ViewModels
 
             await Application.Current.MainPage.DisplayAlert("Éxito", "Datos insertados correctamente.", "OK");
 
-            // ✅ Llama directamente a `CargarHistorialAsync()`
+            // Recargo el historial para reflejar los cambios
             await CargarHistorialAsync();
+
+            // Vuelvo a filtrar la lista según el mes y año seleccionados
+            FiltrarHistorial();
+
+            // Notifico que Historial ha sido actualizado.
             OnPropertyChanged(nameof(Historial));
-
-            // 🔹 Recargar la página manualmente solo si es necesario
-            await Application.Current.MainPage.Navigation.PushAsync(new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora));
         }
-
 
         // Filtro el historial por mes y año seleccionado
         private void FiltrarHistorial()

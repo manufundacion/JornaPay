@@ -8,7 +8,7 @@ using JornaPay.Models;
 [QueryProperty(nameof(PrecioPorHora), "precioPorHora")]
 public partial class NuevoTrabajador : ContentPage
 {
-    private NuevoTrabajadorViewModels _viewModel;
+    public NuevoTrabajadorViewModels ViewModel { get; private set; }
 
     public string Nombre { get; set; }
     public string Apellidos { get; set; }
@@ -22,27 +22,44 @@ public partial class NuevoTrabajador : ContentPage
         Apellidos = apellidos;
         PrecioPorHora = precioPorHora;
 
-        _viewModel = new NuevoTrabajadorViewModels(Nombre, Apellidos, PrecioPorHora);
-        BindingContext = _viewModel;
+        ViewModel = new NuevoTrabajadorViewModels(Nombre, Apellidos, PrecioPorHora);
+        BindingContext = ViewModel;
 
         Title = $"{Nombre} {Apellidos}";
+
+        // Suscribirse al mensaje para recargar la página
+        MessagingCenter.Subscribe<NuevoTrabajadorViewModels>(this, "RecargarHistorial", async (sender) =>
+        {
+            await RecargarPagina();
+        });
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        MessagingCenter.Unsubscribe<NuevoTrabajadorViewModels>(this, "RecargarHistorial");
     }
 
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        await CargarDatosAsync();
+    }
 
-        if (!string.IsNullOrEmpty(Nombre) && !string.IsNullOrEmpty(Apellidos))
+    private async Task CargarDatosAsync()
+    {
+        if (ViewModel == null)
         {
-            _viewModel = new NuevoTrabajadorViewModels(Nombre, Apellidos, PrecioPorHora);
-            BindingContext = _viewModel;
-            Title = $"{Nombre} {Apellidos}";
+            ViewModel = new NuevoTrabajadorViewModels(Nombre, Apellidos, PrecioPorHora);
+            BindingContext = ViewModel;
         }
+        await ViewModel.CargarHistorialAsync();
+    }
 
-        if (_viewModel != null)
-        {
-            await _viewModel.CargarHistorialAsync();
-        }
+    // Método público para recargar el historial desde fuera sin llamar OnAppearing
+    public async Task RecargarPagina()
+    {
+        await CargarDatosAsync();
     }
 }

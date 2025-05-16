@@ -71,20 +71,21 @@
             <Label Text="Historial del Trabajador:" 
                    FontSize="Large" 
                    FontAttributes="Bold" 
-                   TextColor="Black" />
+                   TextColor="Black" 
+                   Margin="15,0,0,0"/>
 
             <!-- Contenedor de filtros -->
             <HorizontalStackLayout Padding="5" Spacing="20">
 
                 <!-- Filtro por Mes -->
-                <Label Text="Mes:" FontAttributes="Bold" FontSize="Medium" TextColor="Black" Margin="0,15,0,0"/>
-                <Picker ItemsSource="{Binding Meses}" SelectedItem="{Binding MesSeleccionado}" FontAttributes="Bold"
-                        FontSize="Medium"/>
+                <Label Text="Mes:" FontAttributes="Bold" FontSize="Medium" TextColor="Black" Margin="60,15,0,0"/>
+                <Picker ItemsSource="{Binding Meses}" SelectedItem="{Binding MesSeleccionado}" FontAttributes="Bold" 
+                        Margin="0,5,0,0" FontSize="Medium"/>
 
                 <!-- Filtro por Año -->
                 <Label Text="Año:" FontAttributes="Bold" FontSize="Medium" TextColor="Black" Margin="0,15,0,0"/>
-                <Picker ItemsSource="{Binding Años}" SelectedItem="{Binding AñoSeleccionado}" FontAttributes="Bold"
-                        FontSize="Medium"/>
+                <Picker ItemsSource="{Binding Años}" SelectedItem="{Binding AñoSeleccionado}" FontAttributes="Bold" 
+                        Margin="0,5,0,0" FontSize="Medium"/>
 
             </HorizontalStackLayout>
 

@@ -97,13 +97,14 @@ namespace JornaPay.ViewModels
                 if (_trabajadorSeleccionado != value)
                 {
                     _trabajadorSeleccionado = value;
-                    OnPropertyChanged(nameof(TrabajadorSeleccionado)); //Notifico cambios
-                    OnPropertyChanged(nameof(PuedeActualizar)); //Actualizo al trabjador seleccionado
-                    OnPropertyChanged(nameof(PuedeEliminar));   //Elimino al trabjador seleccionado
-                    CargarHistorialTrabajadorAsync();
+                    OnPropertyChanged(nameof(TrabajadorSeleccionado));
+                    OnPropertyChanged(nameof(PuedeActualizar));
+                    OnPropertyChanged(nameof(PuedeEliminar));
+                    _ = CargarHistorialTrabajadorAsync();
                 }
             }
         }
+
 
 
         public ICommand IniciarSesionCommand { get; }
@@ -132,8 +133,7 @@ namespace JornaPay.ViewModels
                 {
                     await RegistrarUsuario(datosUsuario.Value.NombreUsuario, datosUsuario.Value.Contrasenya);
                 }
-            });
-            CrearTrabajadorCommand = new Command(async () => await CrearTrabajador());
+            }); CrearTrabajadorCommand = new Command(CrearTrabajador);
             AnyadirDatosCommand = new Command(AnyadirDatos);
             ActualizarDatosCommand = new Command(ActualizarDatos, CanActualizarDatos);
             GuardarRegistroCommand = new Command(GuardarRegistro);
@@ -276,7 +276,7 @@ namespace JornaPay.ViewModels
             return await tcs.Task;
         }
 
-        private async Task CrearTrabajador()
+        private async void CrearTrabajador()
         {
             try
             {
@@ -298,10 +298,7 @@ namespace JornaPay.ViewModels
                 };
 
                 await _trabajadoresServicio.CrearTrabajadorAsync(trabajador);
-
-                // ✅ Recargar lista después de insertar un trabajador
-                await CargarTrabajadoresAsync();
-                OnPropertyChanged(nameof(Trabajadores)); // ✅ Notificar el cambio a la UI
+                Trabajadores.Add(trabajador);
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador registrado con éxito.", "OK");
             }
@@ -310,8 +307,6 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"Hubo un problema: {ex.Message}", "OK");
             }
         }
-
-
 
         private async void AnyadirDatos()
         {
@@ -337,13 +332,11 @@ namespace JornaPay.ViewModels
                 await _trabajadoresServicio.CrearTrabajadorAsync(trabajador);
                 Trabajadores.Add(trabajador);
 
-                await CargarTrabajadoresAsync(); // Recargo la lista desde la base de datos
-
                 var nuevaPagina = new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora);
                 Shell.Current.Items.Add(new FlyoutItem
                 {
                     Title = $"{Nombre} {Apellidos}",
-                    Icon = "trabajadoresicono.png", 
+                    Icon = "trabajadoresicono.png",
                     Items =
                     {
                         new ShellContent
@@ -608,6 +601,8 @@ namespace JornaPay.ViewModels
                     return;
                 }
 
+                Trabajadores.Clear();
+
                 Shell.Current.Dispatcher.Dispatch(() =>
                 {
                     try
@@ -621,6 +616,7 @@ namespace JornaPay.ViewModels
                             });
                         }
 
+                        //Elimino los elementos duplicados
                         var itemsToRemove = Shell.Current.Items.Where(item =>
                             item is FlyoutItem flyoutItem &&
                             flyoutItem.Title != "Inscripción de Trabajadores" &&
@@ -634,22 +630,13 @@ namespace JornaPay.ViewModels
                             Shell.Current.Items.Remove(item);
                         }
 
-                        if (Trabajadores == null)
-                        {
-                            Trabajadores = new ObservableCollection<Trabajador>(trabajadores);
-                        }
-                        else
-                        {
-                            // En lugar de Clear + Add, podrías optimizar añadiendo solo los que no estén
-                            Trabajadores.Clear();
-                            foreach (var t in trabajadores)
-                            {
-                                Trabajadores.Add(t);
-                            }
-                        }
-
+                        //Añado los trabajadores al menú
+                        // Añado los trabajadores al menú
                         foreach (var trabajador in trabajadores)
                         {
+                            Trabajadores.Add(trabajador);
+
+                            // Agrego trabajador al Shell si no existe aún
                             if (!Shell.Current.Items.Any(item => item.Title == $"{trabajador.Nombre} {trabajador.Apellidos}"))
                             {
                                 var nuevoFlyoutItem = new FlyoutItem
@@ -657,14 +644,14 @@ namespace JornaPay.ViewModels
                                     Title = $"{trabajador.Nombre} {trabajador.Apellidos}",
                                     Icon = "trabajadoresicono.png",
                                     Items =
-                            {
-                                new ShellContent
-                                {
-                                    Title = $"{trabajador.Nombre} {trabajador.Apellidos}",
-                                    Icon = "trabajadoresicono.png",
-                                    ContentTemplate = new DataTemplate(() => new NuevoTrabajador(trabajador.Nombre, trabajador.Apellidos, trabajador.PrecioPorHora))
-                                }
-                            }
+                                    {
+                                        new ShellContent
+                                        {
+                                            Title = $"{trabajador.Nombre} {trabajador.Apellidos}",
+                                            Icon = "trabajadoresicono.png",
+                                            ContentTemplate = new DataTemplate(() => new NuevoTrabajador(trabajador.Nombre, trabajador.Apellidos, trabajador.PrecioPorHora))
+                                        }
+                                    }
                                 };
                                 Shell.Current.Items.Add(nuevoFlyoutItem);
                             }
@@ -684,7 +671,6 @@ namespace JornaPay.ViewModels
                 Console.WriteLine($"Error en CargarTrabajadoresAsync: {ex.Message}");
             }
         }
-
 
 
         private async Task GenerarYDescargarPdfAsync()
