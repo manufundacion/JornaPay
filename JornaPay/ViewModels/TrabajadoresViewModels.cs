@@ -132,7 +132,8 @@ namespace JornaPay.ViewModels
                 {
                     await RegistrarUsuario(datosUsuario.Value.NombreUsuario, datosUsuario.Value.Contrasenya);
                 }
-            }); CrearTrabajadorCommand = new Command(CrearTrabajador);
+            });
+            CrearTrabajadorCommand = new Command(async () => await CrearTrabajador());
             AnyadirDatosCommand = new Command(AnyadirDatos);
             ActualizarDatosCommand = new Command(ActualizarDatos, CanActualizarDatos);
             GuardarRegistroCommand = new Command(GuardarRegistro);
@@ -275,7 +276,7 @@ namespace JornaPay.ViewModels
             return await tcs.Task;
         }
 
-        private async void CrearTrabajador()
+        private async Task CrearTrabajador()
         {
             try
             {
@@ -297,7 +298,13 @@ namespace JornaPay.ViewModels
                 };
 
                 await _trabajadoresServicio.CrearTrabajadorAsync(trabajador);
-                Trabajadores.Add(trabajador);
+
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    Trabajadores.Add(trabajador);
+                    await CargarTrabajadoresAsync(); // Recargo la lista desde la base de datos
+                    OnPropertyChanged(nameof(Trabajadores)); // Notifico el cambio
+                });
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador registrado con éxito.", "OK");
             }
@@ -306,6 +313,7 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"Hubo un problema: {ex.Message}", "OK");
             }
         }
+
 
         private async void AnyadirDatos()
         {
@@ -330,6 +338,8 @@ namespace JornaPay.ViewModels
 
                 await _trabajadoresServicio.CrearTrabajadorAsync(trabajador);
                 Trabajadores.Add(trabajador);
+
+                await CargarTrabajadoresAsync(); // Recargo la lista desde la base de datos
 
                 var nuevaPagina = new NuevoTrabajador(Nombre, Apellidos, PrecioPorHora);
                 Shell.Current.Items.Add(new FlyoutItem
@@ -629,7 +639,6 @@ namespace JornaPay.ViewModels
                             Shell.Current.Items.Remove(item);
                         }
 
-                        //Añado los trabajadores al menú
                         // Añado los trabajadores al menú
                         foreach (var trabajador in trabajadores)
                         {
