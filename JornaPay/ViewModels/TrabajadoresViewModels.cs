@@ -298,7 +298,18 @@ namespace JornaPay.ViewModels
                 };
 
                 await _trabajadoresServicio.CrearTrabajadorAsync(trabajador);
-                Trabajadores.Add(trabajador);
+
+                // Si la colección está vacía o nula, la inicializo primero
+                if (Trabajadores == null)
+                    Trabajadores = new ObservableCollection<Trabajador>();
+
+                // Creo una nueva colección con los elementos actuales y el nuevo
+                var nuevaLista = new ObservableCollection<Trabajador>(Trabajadores)
+                {
+                    trabajador
+                };
+
+                Trabajadores = nuevaLista;
 
                 await Application.Current.MainPage.DisplayAlert("Éxito", "Trabajador registrado con éxito.", "OK");
             }
