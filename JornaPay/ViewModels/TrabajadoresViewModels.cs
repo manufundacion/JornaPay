@@ -505,7 +505,7 @@ namespace JornaPay.ViewModels
             {
                 await _trabajadoresServicio.EliminarTrabajadorAsync(TrabajadorSeleccionado.Id);
 
-                // Busco y elimino la página del trabajador en Shell
+                // Busco y elimino la página del trabajador del Shel
                 var itemAEliminar = Shell.Current.Items.FirstOrDefault(item =>
                     item.Title == $"{TrabajadorSeleccionado.Nombre} {TrabajadorSeleccionado.Apellidos}");
 
@@ -514,10 +514,16 @@ namespace JornaPay.ViewModels
                     Shell.Current.Items.Remove(itemAEliminar);
                 }
 
-                TrabajadorSeleccionado = null;
+                // Elimino de la colección del ObservableCollection al trabajador
+                Trabajadores.Remove(TrabajadorSeleccionado);
 
-                // Recarga la lista completa
-                await CargarTrabajadoresAsync();
+                // Si la lista queda vacía, asigno una nueva instancia vacía para actualizar la lista de trabajadores
+                if (Trabajadores.Count == 0)
+                {
+                    Trabajadores = new ObservableCollection<Trabajador>();
+                }
+
+                TrabajadorSeleccionado = null;
 
                 ActualizarTotalPendiente();
 
@@ -528,6 +534,7 @@ namespace JornaPay.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudo eliminar el trabajador: {ex.Message}", "OK");
             }
         }
+
 
 
         private async Task CargarHistorialTrabajadorAsync()
