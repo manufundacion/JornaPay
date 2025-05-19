@@ -19,6 +19,7 @@
             <!-- Precio por Hora -->
             <Label Text="Precio por Hora:" FontAttributes="Bold" FontSize="Large" />
             <Entry Placeholder="Introduce el precio por hora"
+                   PlaceholderColor="Gray"
                    Text="{Binding PrecioPorHora, StringFormat='{}{0:F2}'}" 
                    Keyboard="Numeric" FontSize="Large"/>
 
@@ -137,7 +138,7 @@
                                        TextColor="Black" WidthRequest="80" Margin="10,0,-10,0" FontSize="17"/>
                                 
                                 <Label Text="{Binding EstadoPago}" HorizontalOptions="Start" 
-                                       TextColor="Black" WidthRequest="70"  Margin="0,0,-6,0" FontSize="17"/>
+                                       TextColor="Black" WidthRequest="70" FontSize="17"/>
 
                                 <Label Text="{Binding PrecioTotal, StringFormat='{}{0} €'}" HorizontalOptions="Start" 
                                        TextColor="Black" WidthRequest="80" FontSize="17"/>
