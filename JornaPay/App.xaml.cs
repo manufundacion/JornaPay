@@ -8,6 +8,10 @@ namespace JornaPay
         {
             InitializeComponent();
 
+            // Forzar tema claro
+            Application.Current.UserAppTheme = AppTheme.Light;
+
+
             MainPage = new NavigationPage(new InicioRegistro());
         }
     }

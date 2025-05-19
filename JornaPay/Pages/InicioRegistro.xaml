@@ -38,7 +38,7 @@
     <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="25">
             <Label Text="Bienvenido a:" Style="{StaticResource titulo}" Margin="0,50,0,0" />
-            <Image Source="jornapay.png" HeightRequest="200" />
+            <Image Source="jornapayportada.png" HeightRequest="200" />
             <Entry Placeholder="Nombre de Usuario" Text="{Binding NombreUsuario}" PlaceholderColor="White" FontAttributes="Bold" 
                     BackgroundColor="Transparent" HeightRequest="60" FontSize="24" />
             <Entry Placeholder="Contraseña" Text="{Binding Contraseña}"  PlaceholderColor="White" FontAttributes="Bold"

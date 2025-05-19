@@ -16,10 +16,11 @@
                        TextColor="Black"
                        FontAttributes="Bold"
                        FontSize="19"
-                       HorizontalOptions="Center" />
-                <Image Source="jornapay.png"
+                       HorizontalOptions="Center"
+                       Margin="0,0,0,10"/>
+                <Image Source="jornapayportada.png"
                        Aspect="AspectFill"
-                       HeightRequest="100"
+                       HeightRequest="150"
                        HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Frame>
