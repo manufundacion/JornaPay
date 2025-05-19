@@ -32,6 +32,7 @@
             <!-- Entrada de Horas Trabajadas -->
             <Label Text="Horas Trabajadas:" FontAttributes="Bold" FontSize="Large"/>
             <Entry Placeholder="Introduce las horas trabajadas"
+                   PlaceholderColor="Gray"
                    Text="{Binding HorasTrabajadas}" 
                    Keyboard="Numeric" FontSize="Large"/>
 
