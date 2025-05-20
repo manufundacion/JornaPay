@@ -619,6 +619,7 @@ namespace JornaPay.ViewModels
                     return;
                 }
 
+                //Limpio la lista antes de cargar nuevos datos
                 Trabajadores.Clear();
 
                 Shell.Current.Dispatcher.Dispatch(() =>
@@ -648,8 +649,8 @@ namespace JornaPay.ViewModels
                             Shell.Current.Items.Remove(item);
                         }
 
-                        //Añado los trabajadores al menú
                         // Añado los trabajadores al menú
+                        Trabajadores.Clear();
                         foreach (var trabajador in trabajadores)
                         {
                             Trabajadores.Add(trabajador);
